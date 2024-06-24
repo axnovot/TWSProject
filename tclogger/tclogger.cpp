@@ -51,10 +51,13 @@ TCLogger::~TCLogger()
     }
 }
 
-void TCLogger::endTimedLog()
+void 
+TCLogger::endTimedLog()
 {
     elog_ << getTime() << " " << str() << endl;
     str("");
     clear();
 }
+
+
 

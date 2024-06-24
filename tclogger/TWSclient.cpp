@@ -13,3 +13,5 @@ int main(){
     log << "Have a nice day"; 
     log.endTimedLog(); 
 }
+
+
