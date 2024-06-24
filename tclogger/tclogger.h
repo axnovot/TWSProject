@@ -13,8 +13,10 @@ public:
 
     void endTimedLog();
 private:
+    string elogFilePath() const;
     string getDate() const;
     string getTime() const;
+   
 private:
     ofstream elog_;
 

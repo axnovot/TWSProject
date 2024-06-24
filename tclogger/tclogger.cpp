@@ -3,11 +3,53 @@
 #include <limits>
 #include <ctime>
 #include <chrono>
+#include <cstdlib>
 #include "tclogger.h"
 
 #ifdef __linux__
 #define localtime_s(tm, time) localtime_r(time, tm);
 #endif
+
+
+TCLogger::TCLogger()
+{
+    string filename = elogFilePath() + "twsclient_elog2" + getDate() + ".txt";
+    elog_.open(filename, ios::app);
+    if(!elog_){
+        throw ios_base::failure("File Open Failure" + filename);
+    }
+}
+
+TCLogger::~TCLogger()
+{
+    if(elog_.is_open()){
+        elog_.close();
+    }
+}
+
+string
+TCLogger::elogFilePath() const
+{
+    const char* data_area = getenv("TC_DATA_AREA");
+    if(data_area != nullptr)
+    {
+        cout << "The data area is set to: " << data_area << endl;
+        return string(data_area);
+    }
+    else
+    {
+        cerr << "The Data Area Is Not Set" << endl;
+        throw ios_base::failure("Data Path Not Set");
+    }
+}
+
+void 
+TCLogger::endTimedLog()
+{
+    elog_ << getTime() << " " << str() << endl;
+    str("");
+    clear();
+}
 
 string 
 TCLogger::getDate() const 
@@ -38,30 +80,4 @@ TCLogger::getTime() const
 
     return time.str();
 }
-
-TCLogger::TCLogger()
-{
-    string filename = "C:\\Projects\\Logger\\Data\\FinalBeforeSend" + getDate() + ".txt";
-    elog_.open(filename, ios::app);
-    if(!elog_){
-        throw ios_base::failure("File Open Failure" + filename);
-    }
-}
-
-TCLogger::~TCLogger()
-{
-    if(elog_.is_open()){
-        elog_.close();
-    }
-}
-
-void 
-TCLogger::endTimedLog()
-{
-    elog_ << getTime() << " " << str() << endl;
-    str("");
-    clear();
-}
-
-
 

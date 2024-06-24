@@ -1,5 +1,5 @@
-#include "tclogger.h"
 #include <iostream>
+#include "tclogger.h"
 
 int main(){
     TCLogger log;
