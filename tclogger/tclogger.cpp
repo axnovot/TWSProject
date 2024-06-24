@@ -5,6 +5,10 @@
 #include <chrono>
 #include "tclogger.h"
 
+#ifdef __linux__
+#define localtime_s(tm, time) localtime_r(time, tm);
+#endif
+
 string 
 TCLogger::getDate() const 
 {
