@@ -1,16 +1,16 @@
-CC := g++
-
-#MN# #$@ is the .o file
-#MN# #$< is the .c file
+# $@ evaluates to the .o file
+# $< evaluates to the .c file
+# $^ evaluates to all prerequisites separated by a space
 %.o:	%.cpp
-	${CC} -o $@ -c $<
+	g++ $(CPPFLAGS) -o $@ -c $<
 
-TWSClientOBJS := TWSclient.o tclogger.o
+# list of object files, corresponding to *.cpp files
+TWSClientOBJS := $(patsubst %.cpp,%.o, $(wildcard *.cpp))
 
 TWSClient:	${TWSClientOBJS}
-		${CC} -o TWSClient ${TWSClientOBJS}
+		g++ $(LDFLAGS) -o TWSClient $^
 
-all:		TWSClient
+all:		clean TWSClient
 
 clean:	
 	rm -rf TWSClient
