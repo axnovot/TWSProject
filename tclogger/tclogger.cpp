@@ -13,16 +13,16 @@
 
 TCLogger::TCLogger()
 {
-    string filename = elogFilePath() + "twsclient_elog2" + getDate() + ".txt";
+    string filename = elogFilePath() + "twsclient_elog2_" + getDate() + ".txt";
     elog_.open(filename, ios::app);
-    if(!elog_){
+    if (!elog_) {
         throw ios_base::failure("File Open Failure" + filename);
     }
 }
 
 TCLogger::~TCLogger()
 {
-    if(elog_.is_open()){
+    if (elog_.is_open()) {
         elog_.close();
     }
 }
@@ -31,15 +31,12 @@ string
 TCLogger::elogFilePath() const
 {
     const char* data_area = getenv("TC_DATA_AREA");
-    if(data_area != nullptr)
-    {
+    if (data_area != nullptr) {
         cout << "The data area is set to: " << data_area << endl;
-        return string(data_area);
-    }
-    else
-    {
-        cerr << "The Data Area Is Not Set" << endl;
-        throw ios_base::failure("Data Path Not Set");
+        return data_area;
+    } else {
+        cerr << "TC_DATA_AREA env is not set" << endl;
+        throw ios_base::failure("TC_DATA_AREA env is not set");
     }
 }
 
