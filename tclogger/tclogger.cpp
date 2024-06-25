@@ -11,9 +11,15 @@
 #endif
 
 
+TCLogger &TCLogger:: Me()
+{
+    static TCLogger me;
+    return me;
+}
+
 TCLogger::TCLogger()
 {
-    string filename = elogFilePath() + "twsclient_elog2_" + getDate() + ".txt";
+    string filename = elogFilePath() + "twsclient_elog3_" + getDate() + ".txt";
     elog_.open(filename, ios::app);
     if (!elog_) {
         throw ios_base::failure("File Open Failure" + filename);

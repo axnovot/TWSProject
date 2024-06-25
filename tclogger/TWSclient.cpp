@@ -1,17 +1,18 @@
 #include <iostream>
 #include "tclogger.h"
 
+
 int main(){
-    TCLogger log;
+    TCLogger& logger = TCLogger::Me();
+    logger << "Hello World";
+    logger.endTimedLog();
 
-    log << "Hello World"; 
-    log.endTimedLog();
-    
-    log << "This is Alex"; 
-    log.endTimedLog();
+    logger << "This is Alex";
+    logger.endTimedLog();
 
-    log << "Have a nice day"; 
-    log.endTimedLog(); 
+    logger << "Have a nice day";
+    logger.endTimedLog(); 
 }
+
 
 

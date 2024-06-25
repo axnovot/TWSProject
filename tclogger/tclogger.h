@@ -8,11 +8,13 @@ using namespace std;
 
 class TCLogger : public ostringstream {
 public:
+    static TCLogger& Me();
+    void endTimedLog();
+
+private:
     TCLogger();
     ~TCLogger();
 
-    void endTimedLog();
-private:
     string elogFilePath() const;
     string getDate() const;
     string getTime() const;
