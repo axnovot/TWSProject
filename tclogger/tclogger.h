@@ -8,7 +8,7 @@ using namespace std;
 
 class TCLogger : public ostringstream {
 public:
-    static TCLogger& Me();
+    static TCLogger& getInstance();
     void endTimedLog();
 
 private:

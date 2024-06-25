@@ -11,10 +11,10 @@
 #endif
 
 
-TCLogger &TCLogger:: Me()
+TCLogger &TCLogger:: getInstance()
 {
-    static TCLogger me;
-    return me;
+    static TCLogger intsance;
+    return intsance;
 }
 
 TCLogger::TCLogger()
