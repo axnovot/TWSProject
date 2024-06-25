@@ -3,7 +3,7 @@
 
 
 int main(){
-    TCLogger& logger = TCLogger::Me();
+    TCLogger& logger = TCLogger::getInstance();
     logger << "Hello World";
     logger.endTimedLog();
 

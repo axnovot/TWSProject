@@ -13,8 +13,8 @@
 
 TCLogger &TCLogger:: getInstance()
 {
-    static TCLogger intsance;
-    return intsance;
+    static TCLogger instance;
+    return instance;
 }
 
 TCLogger::TCLogger()
