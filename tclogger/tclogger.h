@@ -23,6 +23,11 @@ private:
     ofstream elog_;
 
 };
+typedef void endtl_t();
+void endtl();
+
+ostream& operator<<(ostream& logger, endtl_t);
+
 #endif
 
 

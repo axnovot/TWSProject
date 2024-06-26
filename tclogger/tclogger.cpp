@@ -11,7 +11,7 @@
 #endif
 
 
-TCLogger &TCLogger:: getInstance()
+TCLogger& TCLogger::getInstance()
 {
     static TCLogger instance;
     return instance;
@@ -19,7 +19,7 @@ TCLogger &TCLogger:: getInstance()
 
 TCLogger::TCLogger()
 {
-    string filename = elogFilePath() + "twsclient_elog3_" + getDate() + ".txt";
+    string filename = elogFilePath() + "twsclient_elog" + getDate() + ".txt";
     elog_.open(filename, ios::app);
     if (!elog_) {
         throw ios_base::failure("File Open Failure" + filename);
@@ -58,9 +58,10 @@ string
 TCLogger::getDate() const 
 {
     time_t calTime = time(NULL);
-    tm *loctime = localtime(&calTime);
+    tm loctime; 
+    localtime_s(&loctime,&calTime);
     stringstream date;
-    date << put_time(loctime, "%Y%m%d");
+    date << put_time(&loctime, "%Y%m%d");
 
     return date.str();
 }
@@ -84,3 +85,18 @@ TCLogger::getTime() const
     return time.str();
 }
 
+ostream& operator << (ostream& logger, endtl_t){
+    TCLogger* casted = dynamic_cast<TCLogger*>(&logger);
+    if (casted) {
+        cout << "Cast Successful" << endl;
+        casted -> endTimedLog();
+        return logger;
+    } else {
+        cout << " : This Message Is Not On Logger Instance" << endl;
+        return logger << endl;
+    }
+}
+
+void endtl(){
+
+}

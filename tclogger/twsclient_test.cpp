@@ -1,3 +1,4 @@
+/*
 #include <iostream>
 #include "tclogger.h"
 
@@ -10,8 +11,6 @@ int main(){
 
     logger << "Have a nice day" << endtl;
 
-    cout << "Message Using Cout" << endtl; 
+    //cout << "Message Using Cout" << endtl; - this message will be unsuccessfull
 }
-
-
-
+*/
