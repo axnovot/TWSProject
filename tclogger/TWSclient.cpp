@@ -3,12 +3,11 @@
 
 
 int main(){
-    TCLogger& logger = TCLogger::getInstance();
-    logger << "Hello World" << endtl;
+    ELOG << "Hello World" << endtl;
 
-    logger << "This is Alex" << endtl;
+    ELOG << "This is Alex" << endtl;
 
-    logger << "Have a nice day" << endtl;
+    ELOG << "Have a nice day" << endtl;
 
     cout << "Message Using Cout" << endtl; 
 }

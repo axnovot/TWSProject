@@ -4,6 +4,8 @@
 #include <sstream>
 #include <fstream>
 
+#define ELOG TCLogger::getInstance()
+
 using namespace std;
 
 class TCLogger : public ostringstream {
@@ -24,7 +26,7 @@ private:
 
 };
 typedef void endtl_t();
-void endtl();
+endtl_t endtl;
 
 ostream& operator<<(ostream& logger, endtl_t);
 
