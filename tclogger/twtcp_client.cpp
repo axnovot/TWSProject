@@ -16,7 +16,7 @@ tcp_client()
     //establish a connection and exchange information
 
     int sockConnection = socket(AF_INET ,SOCK_STREAM ,0); //adress family, socket type, protocol
-    if(sockConnection < 0)
+    if (sockConnection < 0)
     {
         cerr << "Socket Connection Creation Failure" << endl;
         return 1;
@@ -29,20 +29,20 @@ tcp_client()
     server_address.sin_port = htons(12345); //port number, ensures number is correctly interpreted by network
     server_address.sin_addr.s_addr = inet_addr("127.0.0.1"); //sets ip adress of server
 
-    if(connect(sockConnection, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
+    if (connect(sockConnection, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
     {
         cerr << "Connection Failed" << endl;
         close(sockConnection);
         return 1;
     }
 
-    while(true)
+    while (true)
     {
         string input;
         cout << "Enter A Message: ";
         getline(cin, input);
 
-        if(send(sockConnection, input.c_str(), input.size(), 0) < 0){
+        if (send(sockConnection, input.c_str(), input.size(), 0) < 0){
             cerr << "Send Failed" << endl;
             close(sockConnection);
             return 1;
@@ -50,7 +50,7 @@ tcp_client()
 
         char buffer[1024];
         int bytes_received = recv(sockConnection, buffer, sizeof(buffer)-1, 0);
-        if(bytes_received < 0)
+        if (bytes_received < 0)
         {
             cerr << "Message Reception Failure" << endl;
             close(sockConnection);
