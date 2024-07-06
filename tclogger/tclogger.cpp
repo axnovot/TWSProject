@@ -85,12 +85,12 @@ TCLogger::getTime() const
     return time.str();
 }
 
-ostream& operator << (ostream& logger, endtl_t) 
+ostream& operator<<(ostream& logger, endtl_t) 
 {
-    TCLogger* casted = dynamic_cast<TCLogger*>(&logger);
-    if (casted) {
+    TCLogger* pTCLogger = dynamic_cast<TCLogger*>(&logger);
+    if (pTCLogger) {
         cout << "Cast Successful" << endl;
-        casted -> endTimedLog();
+        pTCLogger->endTimedLog();
         return logger;
     } else {
         cout << " : This Message Is Not On Logger Instance" << endl;
@@ -102,3 +102,4 @@ void endtl()
 {
 
 }
+
