@@ -3,10 +3,13 @@
 
 #include <sstream>
 #include <fstream>
+#include <string>
 
 #define ELOG TCLogger::getInstance()
 
 using namespace std;
+
+
 
 class TCLogger : public ostringstream {
 public:
@@ -28,7 +31,31 @@ private:
 typedef void endtl_t();
 endtl_t endtl;
 
+
+
 ostream& operator<<(ostream& logger, endtl_t);
+
+
+
+class TCtcpClient{
+public:
+    TCtcpClient(const string& remoteHost, int remotePort);
+
+    bool connect();
+    
+    bool connected() const;
+    void disconnect();
+
+    void processMsgs();
+
+private:
+    string remoteHost_;
+    int remotePort_;
+    int fd_;
+
+};
+
+
 
 #endif
 
