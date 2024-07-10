@@ -1,6 +1,6 @@
 #include <iostream>
 #include "tclogger.h"
-//#include "tctcpclient.h"
+#include "tctcpclient.h"
 
 int main(){
     ELOG << "Hello World" << endtl;
@@ -11,7 +11,7 @@ int main(){
 
     cout << "Message Using Cout" << endtl;
 
-    TCtcpClient tcpClient ("127.0.0.1", 12345);
+    TCTcpClient tcpClient ("127.0.0.1", 12345);
     tcpClient.connect();
 
     if (tcpClient.connected()) 
@@ -19,16 +19,4 @@ int main(){
         tcpClient.processMsgs();
         tcpClient.disconnect();
     }
-
-    /*
-    int result = tcp_client();
-    if(result != 0){
-        cerr << "TCP client encountered an error :( " << endl;
-    }
-    */
-
-
 }
-
-
-

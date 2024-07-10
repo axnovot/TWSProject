@@ -5,14 +5,20 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
-#include "tclogger.h"
+#include "tctcpclient.h"
+#include "tcconfig.h"
 
 using namespace std;
 
-TCtcpClient::TCtcpClient(const string& remoteHost, int remotePort) : remoteHost_(remoteHost), remotePort_(remotePort), fd_(-1) {}
+TCTcpClient::TCTcpClient(const string& remoteHost, int remotePort)
+    :remoteHost_(TCConfig::getInstance().tcp_server_host())
+    ,remotePort_(TCConfig::getInstance().tcp_server_port())
+    ,fd_(-1) 
+    {
+    }
 
 bool
-TCtcpClient::connect()
+TCTcpClient::connect()
 {
     fd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (fd_ < 0)
@@ -22,31 +28,25 @@ TCtcpClient::connect()
         return false;
     }
         
-        struct sockaddr_in server_address;
-        server_address.sin_family = AF_INET;
-        server_address.sin_port = htons(remotePort_);
-        server_address.sin_addr.s_addr = inet_addr(remoteHost_.c_str());
+    struct sockaddr_in server_address;
+    server_address.sin_family = AF_INET;
+    server_address.sin_port = htons(remotePort_);
+    server_address.sin_addr.s_addr = inet_addr(remoteHost_.c_str());
 
-        if (::connect(fd_, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
-        {
-            cerr << "Connection To Server Failed" << endl;
-            close(fd_);
-            fd_ = -1;
-            return false;
-        } else {
-            cout << "Connected To : " << remoteHost_ << ":" << remotePort_ << endl;
-            return true;
-        }    
-}
-
-bool
-TCtcpClient::connected() const
-{
-    return fd_ >= 0;
+    if (::connect(fd_, (struct sockaddr*)&server_address, sizeof(server_address)) < 0)
+    {
+        cerr << "Connection To Server Failed" << endl;
+        close(fd_);
+        fd_ = -1;
+        return false;
+    } else {
+        cout << "Connected To : " << remoteHost_ << ":" << remotePort_ << endl;
+        return true;
+    }    
 }
 
 void
-TCtcpClient::disconnect()
+TCTcpClient::disconnect()
 {
     if (connected())
     {
@@ -57,7 +57,7 @@ TCtcpClient::disconnect()
 }
 
 void
-TCtcpClient::processMsgs() 
+TCTcpClient::processMsgs() 
 {
     while (true) 
     {
@@ -68,13 +68,13 @@ TCtcpClient::processMsgs()
         if (cin.eof())
         {
             cerr << "Quit Command Received, Exiting..." << endl;
+            disconnect();
             break;
         }
 
         if (send(fd_, input.c_str(), input.size(), 0) < 0) 
         {
             cerr << "Send Failed" << endl;
-            disconnect();
             return;
         }
         
@@ -86,24 +86,16 @@ TCtcpClient::processMsgs()
             disconnect();
             return;
         }
+        else if(bytes_received == 0) 
+        {
+            cerr << "Server Quit" << endl;
+            disconnect();
+            return;
+        }
+        
+
 
         buffer[bytes_received] = '\0';
         cout << "Server Response: " << buffer << endl;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
