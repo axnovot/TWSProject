@@ -60,76 +60,74 @@ void
 TCTcpClient::processMsgs() 
 {
     while (true) 
-    {   
-        fd_set readfiles, writefiles;
+    {  
+        fd_set readfiles;
         char buffer[1024];
 
         FD_ZERO(&readfiles);
-        FD_ZERO(&writefiles);
         FD_SET(fd_, &readfiles);
-        FD_SET(fd_, &writefiles);
+        FD_SET(STDIN_FILENO, &readfiles);
 
         struct timeval tv;
         tv.tv_sec = 5;
         tv.tv_usec = 0;
 
-        int rv = select(fd_+1, &readfiles, &writefiles, NULL, &tv);
+        int rv = select(fd_ + 1, &readfiles, NULL, NULL, &tv);
         if (rv == -1) 
         {
-            cerr << "Error With Select Function" << endl;
+            cerr << "Error With Select Function()" << endl;
             disconnect();
             return;
         }
-        if (rv == 0)
+
+        if (rv == 0) 
         {
-            cout << "TimeOut, Data Unavaiable In 5 Seconds..." << endl;
+            cerr << "Data Unavailable Within Last 5 Seconds..." << endl;
             continue;
         }
-        else if (rv > 0)
+
+        if (FD_ISSET(STDIN_FILENO, &readfiles)) 
         {
-            if (FD_ISSET(fd_, &writefiles)) 
+            string input;
+            cout << "Enter A Message: " << endl;
+            getline(cin, input);
+
+            if (cin.eof()) 
             {
-
-                string input;
-                cout << "Enter A Message: " << endl;
-                getline(cin, input);
-
-                if (cin.eof())
-                {
-                    cerr << "Quit Command Received, Exiting..." << endl;
-                    disconnect();
-                    break;
-                }
-
-                if (send(fd_, input.c_str(), input.size(), 0) < 0) 
-                {
-                    cerr << "Send Failed" << endl;
-                    disconnect();
-                    return;
-                }
+                cerr << "Quit Command Recieved, Exiting..." << endl;
+                disconnect();
+                break;
             }
-        
-            if (FD_ISSET(fd_, &readfiles))
+
+            if (send(fd_, input.c_str(), input.size(), 0) < 0) 
             {
-                char buffer[1024];
-                int bytes_received = recv(fd_, buffer, sizeof(buffer)-1, 0);
-                if (bytes_received < 0) 
-                {
-                    cerr << "Message Reception Failure" << endl;
-                    disconnect();
-                    return;
-                }
-                else if (bytes_received == 0) 
-                {
-                    cerr << "Server Quit" << endl;
-                    disconnect();
-                    return;
-                }
-        
-                buffer[bytes_received] = '\0';
-                cout << "Server Response: " << buffer << endl;
+                cerr << "Send Failed" << endl;
+                disconnect();
+                return;
             }
+
         }
-    }    
+
+        if (FD_ISSET(fd_, &readfiles)) 
+        { 
+            int bytes_received = recv(fd_, buffer, sizeof(buffer)-1, 0);
+            if (bytes_received < 0) 
+            {
+                cerr << "Message Reception Failure" << endl;
+                disconnect();
+                return;
+            }
+
+            else if (bytes_received == 0) 
+            {
+                cerr << "Server Quit" << endl;
+                disconnect();
+                return;
+            }
+
+            buffer[bytes_received] = '\0';
+            cout << "Server Response: " << buffer << endl;
+        }
+    }     
 }
 
