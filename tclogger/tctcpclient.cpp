@@ -72,7 +72,7 @@ TCTcpClient::processMsgs()
         tv.tv_sec = 5;
         tv.tv_usec = 0;
 
-        int rv = select(fd_+1, &readfiles, &writefiles, NULL, &tv);
+        int rv = select(fd_+1, &readfiles, NULL, NULL, &tv);
         if (rv == -1) 
         {
             cerr << "Error With Select Function" << endl;
