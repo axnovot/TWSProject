@@ -104,6 +104,7 @@ TCTcpClient::processMsgs()
             if (send(fd_, input.c_str(), input.size(), 0) < 0) 
             {
                 cerr << "Send Failed" << endl;
+                disconnect();
                 return;
             }
         }
