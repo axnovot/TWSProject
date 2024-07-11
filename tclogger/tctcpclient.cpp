@@ -1,10 +1,12 @@
 #include <iostream>
 #include <cstring>
+#include <algorithm>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/select.h>
 #include "tctcpclient.h"
 #include "tcconfig.h"
 
@@ -62,17 +64,20 @@ TCTcpClient::processMsgs()
     while (true) 
     {  
         fd_set readfiles;
-        char buffer[1024];
-
         FD_ZERO(&readfiles);
         FD_SET(fd_, &readfiles);
         FD_SET(STDIN_FILENO, &readfiles);
+
+        int max_fd = max(STDIN_FILENO, fd_) + 1;
+        cout << max_fd << endl;
 
         struct timeval tv;
         tv.tv_sec = 5;
         tv.tv_usec = 0;
 
-        int rv = select(fd_ + 1, &readfiles, NULL, NULL, &tv);
+        int rv = select(max_fd, &readfiles, NULL, NULL, &tv);
+        cout << rv << endl;
+
         if (rv == -1) 
         {
             cerr << "Error With Select Function()" << endl;
@@ -83,7 +88,16 @@ TCTcpClient::processMsgs()
         if (rv == 0) 
         {
             cerr << "Data Unavailable Within Last 5 Seconds..." << endl;
+            
+            const char* timeout_msg = "TimeOut";
+            if (send(fd_, timeout_msg, strlen(timeout_msg), 0)< 0) 
+            {
+                cerr << "Send Failed During Time Out" << endl;
+                disconnect();
+                return;
+            }
             continue;
+
         }
 
         if (FD_ISSET(STDIN_FILENO, &readfiles)) 
@@ -110,6 +124,7 @@ TCTcpClient::processMsgs()
 
         if (FD_ISSET(fd_, &readfiles)) 
         { 
+            char buffer[1024];
             int bytes_received = recv(fd_, buffer, sizeof(buffer)-1, 0);
             if (bytes_received < 0) 
             {
@@ -124,7 +139,6 @@ TCTcpClient::processMsgs()
                 disconnect();
                 return;
             }
-
             buffer[bytes_received] = '\0';
             cout << "Server Response: " << buffer << endl;
         }
