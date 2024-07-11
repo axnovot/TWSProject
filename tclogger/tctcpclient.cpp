@@ -60,7 +60,9 @@ void
 TCTcpClient::processMsgs() 
 {
     while (true) 
-    {
+    {   
+        fd_set readfiles, writefiles;
+
         string input;
         cout << "Enter A Message: " << endl;
         getline(cin, input);
