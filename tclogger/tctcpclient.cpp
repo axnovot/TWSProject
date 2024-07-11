@@ -61,7 +61,7 @@ TCTcpClient::processMsgs()
 {
     while (true) 
     {   
-        fd_set readfiles, writefiles;
+        fd_set readfiles;
         char buffer[1024];
 
         FD_ZERO(&readfiles);
@@ -75,15 +75,14 @@ TCTcpClient::processMsgs()
         int rv = select(fd_+1, &readfiles, &writefiles, NULL, &tv);
         if (rv == -1) 
         {
-            cerr << "Error With Select Function";
+            cerr << "Error With Select Function" << endl;
             disconnect();
             return;
         }
         else if (rv == 0)
         {
             cout << "TimeOut, Data Unavaiable In 5 Seconds..." << endl;
-            disconnect();
-            return;
+            continue;
         }
         
         if (FD_ISSET(STDIN_FILENO, &readfiles)) 
