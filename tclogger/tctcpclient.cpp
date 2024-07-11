@@ -65,7 +65,7 @@ TCTcpClient::processMsgs()
         char buffer[1024];
 
         FD_ZERO(&readfiles);
-        FD_ZERO(&writefiles)
+        FD_ZERO(&writefiles);
         FD_SET(fd_, &readfiles);
         FD_SET(fd_, &writefiles);
 
