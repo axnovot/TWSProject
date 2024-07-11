@@ -1,6 +1,7 @@
 #include <iostream>
 #include "tclogger.h"
 #include "tctcpclient.h"
+#include "tcconfig.h"
 
 int main(){
     ELOG << "Hello World" << endtl;
@@ -11,7 +12,9 @@ int main(){
 
     cout << "Message Using Cout" << endtl;
 
-    TCTcpClient tcpClient ("127.0.0.1", 12345);
+    TCConfig& tcconfig = TCConfig::getInstance();
+
+    TCTcpClient tcpClient (tcconfig.tcp_server_host(), tcconfig.tcp_server_port());
     tcpClient.connect();
 
     if (tcpClient.connected()) 

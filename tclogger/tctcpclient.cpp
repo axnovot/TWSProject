@@ -11,11 +11,11 @@
 using namespace std;
 
 TCTcpClient::TCTcpClient(const string& remoteHost, int remotePort)
-    :remoteHost_(TCConfig::getInstance().tcp_server_host())
-    ,remotePort_(TCConfig::getInstance().tcp_server_port())
-    ,fd_(-1) 
-    {
-    }
+ :remoteHost_(TCConfig::getInstance().tcp_server_host())
+ ,remotePort_(TCConfig::getInstance().tcp_server_port())
+ ,fd_(-1) 
+{
+}
 
 bool
 TCTcpClient::connect()
@@ -86,15 +86,13 @@ TCTcpClient::processMsgs()
             disconnect();
             return;
         }
-        else if(bytes_received == 0) 
+        else if (bytes_received == 0) 
         {
             cerr << "Server Quit" << endl;
             disconnect();
             return;
         }
         
-
-
         buffer[bytes_received] = '\0';
         cout << "Server Response: " << buffer << endl;
     }

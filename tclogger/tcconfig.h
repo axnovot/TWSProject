@@ -5,12 +5,11 @@
 
 using namespace std;
 
-class TCConfig
-{
+class TCConfig {
 public:
     static TCConfig& getInstance();
-    string tcp_server_host() const;
-    unsigned int tcp_server_port() const;
+    string tcp_server_host() const {return tcp_server_host_;}
+    unsigned int tcp_server_port() {return tcp_server_port_;}
 
 private:
     TCConfig();

@@ -5,13 +5,13 @@
 
 using namespace std;
 
-class TCTcpClient{
+class TCTcpClient {
 public:
     TCTcpClient(const string& remoteHost, int remotePort);
 
     bool connect();
     
-    inline bool connected() const {return fd_ >= 0;}
+    bool connected() const {return fd_ >= 0;}
     void disconnect();
 
     void processMsgs();
