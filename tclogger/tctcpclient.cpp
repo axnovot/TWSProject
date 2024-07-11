@@ -65,9 +65,8 @@ TCTcpClient::processMsgs()
         char buffer[1024];
 
         FD_ZERO(&readfiles);
-        FD_ZERO(&writefiles);
         FD_SET(fd_, &readfiles);
-        FD_SET(fd_, &writefiles);
+        FD_SET(STDIN_FILENO, &readfiles);
 
         struct timeval tv;
         tv.tv_sec = 5;
@@ -87,7 +86,7 @@ TCTcpClient::processMsgs()
             return;
         }
         
-        if (FD_ISSET(fd_, &writefiles)) 
+        if (FD_ISSET(STDIN_FILENO, &readfiles)) 
         {
 
             string input;
