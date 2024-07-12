@@ -11,12 +11,13 @@
 #include <stdio.h>
 #include "tctcpclient.h"
 #include "tcconfig.h"
+#include "tclogger.h"
 
 using namespace std;
 
 TCTcpClient::TCTcpClient(const string& remoteHost, int remotePort)
- :remoteHost_(TCConfig::getInstance().tcp_server_host())
- ,remotePort_(TCConfig::getInstance().tcp_server_port())
+ :remoteHost_(remoteHost)
+ ,remotePort_(remotePort)
  ,fd_(-1) 
 {
 }
@@ -71,20 +72,23 @@ TCTcpClient::processMsgs()
         FD_SET(fd_, &readfiles);
 
         int max_fd = max(STDIN_FILENO, fd_);
-        cout << "Max_fd: " << max_fd << endl;
+        ELOG << "Max_fd: " << max_fd << endtl;
 
         struct timeval tv;
-        tv.tv_sec = 10;
+        tv.tv_sec = 30;
         tv.tv_usec = 0;
 
-        cout << "Monitoring file descriptors: " << endl;
-        cout << "Socket fd_: " << fd_ << endl;
-        cout << "STDIN_FILENO: " << STDIN_FILENO << endl; 
+        ELOG << "Monitoring file descriptors: " << endtl;
+        ELOG << "Socket fd_: " << fd_ << endtl;
+        ELOG << "STDIN_FILENO: " << STDIN_FILENO << endtl; 
         
-        cout << "Calling Select" << endl;
+        ELOG << "Calling Select" << endtl;
+
+        ELOG << "Enter A Message: " << endtl;
+        cout << "Enter A Message: " << endl;
 
         int rv = select(max_fd + 1, &readfiles, NULL, NULL, &tv);
-        cout << "select value: " << rv << endl;
+        ELOG << "select value: " << rv << endtl;
 
         if (rv == -1) 
         {
@@ -98,13 +102,13 @@ TCTcpClient::processMsgs()
             cerr << "Data Unavailable..." << endl;
             continue;      
         }
-        
-        if (FD_ISSET(STDIN_FILENO, &readfiles)) 
-        {   
-            cout << "FD_ISSET FOR FILENO: " << endl;
+       
+        if (FD_ISSET(STDIN_FILENO, &readfiles))
+        {
+            ELOG << "FD_ISSET for STDIN_FILENO" << endtl;
             string input;
-            cout << "Enter A Message: " << endl;
             getline(cin, input);
+            ELOG << "Message Entered: " <<input << endtl;
 
             if (cin.eof()) 
             {
@@ -119,12 +123,11 @@ TCTcpClient::processMsgs()
                 disconnect();
                 return;
             }
-
         }
 
         if (FD_ISSET(fd_, &readfiles)) 
         { 
-            cout << "FD_ISSET FOR fd_ socket" << endl;
+            ELOG << "FD_ISSET for fd_ socket" << endtl;
             char buffer[1024];
             int bytes_received = recv(fd_, buffer, sizeof(buffer)-1, 0);
             if (bytes_received < 0) 
@@ -142,6 +145,7 @@ TCTcpClient::processMsgs()
             }
             buffer[bytes_received] = '\0';
             cout << "Server Response: " << buffer << endl;
+            ELOG << "Server Response: " << buffer << endtl;
         }
     }     
 }

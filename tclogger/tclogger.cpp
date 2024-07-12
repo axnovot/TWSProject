@@ -19,7 +19,7 @@ TCLogger& TCLogger::getInstance()
 
 TCLogger::TCLogger()
 {
-    string filename = elogFilePath() + "twsclient_elog_" + getDate() + ".txt";
+    string filename = elogFilePath() + "twsclient_elog8_" + getDate() + ".txt";
     elog_.open(filename, ios::app);
     if (!elog_) {
         throw ios_base::failure("File Open Failure" + filename);
