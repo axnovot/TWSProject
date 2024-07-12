@@ -7,6 +7,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <sys/select.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include "tctcpclient.h"
 #include "tcconfig.h"
 
@@ -65,18 +67,24 @@ TCTcpClient::processMsgs()
     {  
         fd_set readfiles;
         FD_ZERO(&readfiles);
-        FD_SET(fd_, &readfiles);
         FD_SET(STDIN_FILENO, &readfiles);
+        FD_SET(fd_, &readfiles);
 
-        int max_fd = max(STDIN_FILENO, fd_) + 1;
-        cout << max_fd << endl;
+        int max_fd = max(STDIN_FILENO, fd_);
+        cout << "Max_fd: " << max_fd << endl;
 
         struct timeval tv;
-        tv.tv_sec = 5;
+        tv.tv_sec = 10;
         tv.tv_usec = 0;
 
-        int rv = select(max_fd, &readfiles, NULL, NULL, &tv);
-        cout << rv << endl;
+        cout << "Monitoring file descriptors: " << endl;
+        cout << "Socket fd_: " << fd_ << endl;
+        cout << "STDIN_FILENO: " << STDIN_FILENO << endl; 
+        
+        cout << "Calling Select" << endl;
+
+        int rv = select(max_fd + 1, &readfiles, NULL, NULL, &tv);
+        cout << "select value: " << rv << endl;
 
         if (rv == -1) 
         {
@@ -84,24 +92,16 @@ TCTcpClient::processMsgs()
             disconnect();
             return;
         }
-
+        
         if (rv == 0) 
         {
-            cerr << "Data Unavailable Within Last 5 Seconds..." << endl;
-            
-            const char* timeout_msg = "TimeOut";
-            if (send(fd_, timeout_msg, strlen(timeout_msg), 0)< 0) 
-            {
-                cerr << "Send Failed During Time Out" << endl;
-                disconnect();
-                return;
-            }
-            continue;
-
+            cerr << "Data Unavailable..." << endl;
+            continue;      
         }
-
+        
         if (FD_ISSET(STDIN_FILENO, &readfiles)) 
-        {
+        {   
+            cout << "FD_ISSET FOR FILENO: " << endl;
             string input;
             cout << "Enter A Message: " << endl;
             getline(cin, input);
@@ -124,6 +124,7 @@ TCTcpClient::processMsgs()
 
         if (FD_ISSET(fd_, &readfiles)) 
         { 
+            cout << "FD_ISSET FOR fd_ socket" << endl;
             char buffer[1024];
             int bytes_received = recv(fd_, buffer, sizeof(buffer)-1, 0);
             if (bytes_received < 0) 
@@ -144,4 +145,5 @@ TCTcpClient::processMsgs()
         }
     }     
 }
+
 
