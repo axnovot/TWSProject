@@ -3,11 +3,10 @@
 
 #include <string>
 #include "tctcpclient.h"
-#include "tclogger.h"
 
 using namespace std;
 
-class TCManager{
+class TCManager {
 public:
     TCManager(const string& remoteHost, int remotePort);
    

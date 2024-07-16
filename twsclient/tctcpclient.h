@@ -13,13 +13,16 @@ public:
     
     bool connected() const {return fd_ >= 0;}
     void disconnect();
+   
+    int getFD() const;
+
+    bool sending(const string& msg);
+    bool receiving();
     
     void processMsgs();
 private:
     string remoteHost_;
     int remotePort_;
     int fd_;
-
-    friend class TCManager;
 };
 #endif

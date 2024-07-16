@@ -61,4 +61,61 @@ TCTcpClient::disconnect()
     }        
 }
 
+int
+TCTcpClient::getFD() const
+{
+    return fd_;
+}
+
+
+bool
+TCTcpClient::sending(const string& msg) 
+{
+    int sent = send(getFD(),msg.c_str(), msg.size(),0);
+    cout << "TCP OUT: " << msg << endl;
+    ELOG << "PM: " << "TCP OUT: " << msg << endtl;
+    if (sent < 0) 
+    {
+        cerr << "Message Failed" << endl;
+        ELOG << "Send Failed" << endtl;
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool
+TCTcpClient::receiving() 
+{
+    string msgReceived; 
+     
+    char buffer[1024];
+    int bytes_received = recv(getFD(), buffer, sizeof(buffer)-1, 0);
+    if (bytes_received < 0) 
+    {
+        cerr << "Message Reception Failure" << endl;
+        ELOG << "PM: " << "Message Reception Failure" << endtl;
+        return false;
+    }
+    
+    else if (bytes_received == 0) 
+    {
+        cerr << "Server Quit" << endl;
+        ELOG << "PM: " <<"Server Quit" << endtl;
+        return false;
+    } else {
+        buffer[bytes_received] = '\0';
+        msgReceived = buffer;
+        cout << "TCP IN: " << msgReceived << endl;
+        ELOG << "PM: " <<"TCP IN: " << msgReceived << endtl;
+        return true;
+    }
+
+}
+
+
+
+
+
+
 
