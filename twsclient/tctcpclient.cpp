@@ -81,7 +81,7 @@ TCTcpClient::send(const string& msg)
 bool
 TCTcpClient::receive() 
 { 
-    int bufferSize = 10;
+    int bufferSize = 1024;
     char buffer[bufferSize + 1];
     int bytes_received;
     string message;
