@@ -14,10 +14,10 @@ public:
     bool connected() const {return fd_ >= 0;}
     void disconnect();
    
-    int getFD() const;
+    int getFD() const {return fd_;}
 
-    bool sending(const string& msg);
-    bool receiving();
+    bool send(const string& msg);
+    bool receive();
     
     void processMsgs();
 private:

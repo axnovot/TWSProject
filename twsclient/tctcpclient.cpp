@@ -61,17 +61,11 @@ TCTcpClient::disconnect()
     }        
 }
 
-int
-TCTcpClient::getFD() const
-{
-    return fd_;
-}
-
 
 bool
-TCTcpClient::sending(const string& msg) 
+TCTcpClient::send(const string& msg) 
 {
-    int sent = send(getFD(),msg.c_str(), msg.size(),0);
+    int sent = ::send(getFD(),msg.c_str(), msg.size(),0);
     cout << "TCP OUT: " << msg << endl;
     ELOG << "PM: " << "TCP OUT: " << msg << endtl;
     if (sent < 0) 
@@ -85,32 +79,40 @@ TCTcpClient::sending(const string& msg)
 }
 
 bool
-TCTcpClient::receiving() 
-{
-    string msgReceived; 
-     
-    char buffer[1024];
-    int bytes_received = recv(getFD(), buffer, sizeof(buffer)-1, 0);
-    if (bytes_received < 0) 
+TCTcpClient::receive() 
+{ 
+    int bufferSize = 10;
+    char buffer[bufferSize + 1];
+    int bytes_received;
+    string message;
+    while (true) 
     {
-        cerr << "Message Reception Failure" << endl;
-        ELOG << "PM: " << "Message Reception Failure" << endtl;
-        return false;
-    }
+        bytes_received = recv(getFD(), buffer, sizeof(buffer)-1, 0);
+        if (bytes_received < 0) 
+        {
+            cerr << "Message Reception Failure" << endl;
+            ELOG << "PM: " << "Message Reception Failure" << endtl;
+            return false;
+        }
     
-    else if (bytes_received == 0) 
-    {
-        cerr << "Server Quit" << endl;
-        ELOG << "PM: " <<"Server Quit" << endtl;
-        return false;
-    } else {
-        buffer[bytes_received] = '\0';
-        msgReceived = buffer;
-        cout << "TCP IN: " << msgReceived << endl;
-        ELOG << "PM: " <<"TCP IN: " << msgReceived << endtl;
-        return true;
+        else if (bytes_received == 0) 
+        {
+            cerr << "Server Quit" << endl;
+            ELOG << "PM: " <<"Server Quit" << endtl;
+            return false;
+        } else {
+            buffer[bytes_received] = '\0';
+            message += buffer;
+            
+            if(bytes_received < bufferSize) 
+            {
+                break;
+            }
+        }
     }
-
+        cout << "TCP IN: " << message << endl;
+        ELOG << "PM: " << "TCP IN: " << message << endtl;
+        return true;
 }
 
 

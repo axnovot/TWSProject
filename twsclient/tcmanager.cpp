@@ -82,7 +82,7 @@ TCManager::processMsgs()
                 break;
             }
 
-            if (!tcpClient_.sending(input))
+            if (!tcpClient_.send(input))
             {
                 return;
             } else {
@@ -92,8 +92,7 @@ TCManager::processMsgs()
 
         if (FD_ISSET(tcpClient_.getFD(), &readFDs))
         {   
-            string input;
-            if (!tcpClient_.receiving()) 
+            if (!tcpClient_.receive()) 
             {
                 return;
             } else {
