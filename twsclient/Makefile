@@ -1,6 +1,9 @@
 # $@ evaluates to the .o file
 # $< evaluates to the .c file
 # $^ evaluates to all prerequisites separated by a space
+
+CPPFLAGS := -Werror -Wall -Wextra
+
 %.o:	%.cpp
 	g++ $(CPPFLAGS) -o $@ -c $<
 

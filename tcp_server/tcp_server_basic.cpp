@@ -28,7 +28,7 @@ int main() {
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(12345); // Change this to your desired port
+    address.sin_port = htons(32001); // Change this to your desired port
 
     // Bind socket to address
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {
@@ -55,6 +55,9 @@ int main() {
         if (bytes_received > 0) {
             std::cout << "Received: " << buffer << std::endl;
             // Echo back to client
+            std::string msg("Hali from server - please wait... ");
+            send(new_socket, msg.c_str(), msg.size(), 0);
+            usleep(3e6);
             send(new_socket, buffer, bytes_received, 0);
         }
 
