@@ -24,7 +24,9 @@ TCManager::init()
         cout << "Connection Successful" << endl;
         ELOG << "TWSClient Is Ready" << endtl;
         return true;
-    } else {
+    } 
+    else 
+    {
         cout << "Connection Failed" << endl;
         return false;
     }
@@ -85,7 +87,9 @@ TCManager::processMsgs()
             if (!tcpClient_.send(input))
             {
                 return;
-            } else {
+            } 
+            else 
+            {
                 cout << "Message Successfully Sent!" << endl;
             }
         }
@@ -95,7 +99,9 @@ TCManager::processMsgs()
             if (!tcpClient_.receive()) 
             {
                 return;
-            } else {
+            } 
+            else 
+            {
                 cout << "Message Sucessfully Received!" << endl;
             }
         }
