@@ -42,7 +42,7 @@ int main() {
         return 1;
     }
 
-    std::cout << "Listening on port 12345..." << std::endl;
+    std::cout << "Listening on port 32001..." << std::endl;
 
     while (true) {
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t *)&addrlen)) < 0) {
