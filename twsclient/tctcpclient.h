@@ -8,6 +8,7 @@ using namespace std;
 class TCTcpClient {
 public:
     TCTcpClient(const string& remoteHost, int remotePort);
+    ~TCTcpClient();
 
     bool connect();
     

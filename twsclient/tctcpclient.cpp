@@ -23,13 +23,20 @@ TCTcpClient::TCTcpClient(const string& remoteHost, int remotePort)
 {
 }
 
+
+TCTcpClient::~TCTcpClient() 
+{
+    disconnect();
+}
+
 bool
 TCTcpClient::connect()
 {
     fd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (fd_ < 0)
     {
-        cerr << "Socket Connection Creation Failure" << endl;
+        cerr << "Socket Connection Creation Failure" << strerror(errno) << endl;
+        ELOG << "PM: " << "Connection To Server Failed" << strerror(errno) << endl;
         fd_ = -1;
         return false;
     }
@@ -41,7 +48,8 @@ TCTcpClient::connect()
 
     if (::connect(fd_, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) 
     {
-        cerr << "Connection To Server Failed" << endl;
+        cerr << "Connection To Server Failed" << strerror(errno) << endl;
+        ELOG << "PM: " << "Connection To Server Failed" << strerror(errno) << endl;
         close(fd_);
         fd_ = -1;
         return false;
@@ -52,7 +60,8 @@ TCTcpClient::connect()
         int flags = fcntl(fd_, F_GETFL, 0);
         if (fcntl(fd_, F_SETFL, flags | O_NONBLOCK) < 0) 
         {
-            cerr << "Error Making Connection Nonblocking :(" << endl;
+            cerr << "Error Making Connection Nonblocking :(" << strerror(errno) << endl;
+            ELOG << "PM: " << "Connection To Server Failed" << strerror(errno) << endl;
         }
 
         cout << "Connected To : " << remoteHost_ << ":" << remotePort_ << endl;
@@ -68,6 +77,7 @@ TCTcpClient::disconnect()
         close(fd_);
         fd_ = -1;
         cout << "Connection Closed" << endl;
+        ELOG << "TCTcpClient Disconnected" << endtl;
     }        
 }
 
@@ -80,8 +90,8 @@ TCTcpClient::send(const string& msg)
     ELOG << "PM: " << "TCP OUT: " << msg << endtl;
     if (sent < 0) 
     {
-        cerr << "Message Failed" << endl;
-        ELOG << "Send Failed" << endtl;
+        cerr << "Message Failed" << strerror(errno) << endl;
+        ELOG << "Send Failed" << strerror(errno) <<endtl;
         return false;
     } 
     else 
@@ -95,11 +105,10 @@ TCTcpClient::receive()
 { 
     const int maxRecvSize = 10;
     char buffer[maxRecvSize + 1];
-    int bytes_received;
     string message;
     while (true) 
     {
-        bytes_received = recv(getFD(), buffer, maxRecvSize, 0);
+        const int bytes_received = recv(getFD(), buffer, maxRecvSize, 0);
         if (bytes_received < 0) 
         {
             if (errno == EAGAIN || errno == EWOULDBLOCK) 
@@ -108,15 +117,15 @@ TCTcpClient::receive()
             }
             else 
             {
-                cerr << "Message Reception Failure" << endl;
-                ELOG << "PM: " << "Message Reception Failure" << endtl;
+                cerr << "Message Reception Failure" << strerror(errno) <<endl;
+                ELOG << "PM: " << "Message Reception Failure" << strerror(errno) << endtl;
                 return false;
             }
         }
         else if (bytes_received == 0) 
         {
-            cerr << "Server Quit" << endl;
-            ELOG << "PM: " <<"Server Quit" << endtl;
+            cerr << "Server Quit " << strerror(errno) << endl;
+            ELOG << "PM: " <<"Server Quit " << strerror(errno) << endtl;
             return false;
         } 
         else 
@@ -134,10 +143,3 @@ TCTcpClient::receive()
     ELOG << "PM: " << "TCP IN: " << message << endtl;
     return true;
 }
-
-
-
-
-
-
-

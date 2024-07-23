@@ -9,7 +9,8 @@ using namespace std;
 class TCManager {
 public:
     TCManager(const string& remoteHost, int remotePort);
-   
+    ~TCManager();   
+
     bool init();
     void processMsgs();
     void shutDown();

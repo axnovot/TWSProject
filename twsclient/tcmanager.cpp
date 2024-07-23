@@ -6,6 +6,7 @@
 #include <sys/select.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "tcmanager.h"
 #include "tclogger.h"
 #include "tctcpclient.h"
@@ -15,6 +16,10 @@ using namespace std;
 TCManager::TCManager(const string& remoteHost, int remotePort) 
  : tcpClient_(remoteHost, remotePort) {}
 
+TCManager::~TCManager() 
+{
+    shutDown();    
+}
 
 bool
 TCManager::init()
@@ -57,16 +62,16 @@ TCManager::processMsgs()
 
         if (rv == -1)
         {
-            cerr << "Error With Select Function()" << endl;
-            ELOG << "PM: " <<"Error With Select Function()" << endtl;
+            cerr << "Error With Select Function()" << strerror(errno) << endl;
+            ELOG << "PM: " <<"Error With Select Function()" << strerror(errno) << endtl;
             tcpClient_.disconnect();
             return;
         }
 
         if (rv == 0)
         {
-            cerr << "Data Unavailable..." << endl;
-            ELOG << "PM: " << "Data Unavailable..." << endtl;
+            cerr << "Data Unavailable..." << strerror(errno) << endl;
+            ELOG << "PM: " << "Data Unavailable..." << strerror(errno) << endtl;
             continue;
         }
 
@@ -78,8 +83,8 @@ TCManager::processMsgs()
 
             if (cin.eof())
             {
-                cerr << "Quit Command Recieved, Exiting..." << endl;
-                ELOG << "PM: " << "Quit Command Received, Exiting..." << endtl;
+                cerr << "Quit Command Recieved, Exiting..." << strerror(errno) << endl;
+                ELOG << "PM: " << "Quit Command Received, Exiting..." << strerror(errno) << endtl;
                 tcpClient_.disconnect();
                 break;
             }
@@ -112,5 +117,5 @@ void
 TCManager::shutDown()
 {
     tcpClient_.disconnect();
+    ELOG << "TCManager Shutting Down" << endtl; 
 }
-
