@@ -47,7 +47,8 @@ TCManager::init()
     } 
     else 
     {
-        cerr << "Connection Failed" << endl;
+        cerr << "Connection Failed " << strerror(errno) << endl;
+        ELOG << "Connection Failed " << strerror(errno) << endl;
         return false;
     }
 }
@@ -84,16 +85,16 @@ TCManager::processMsgs()
 
         if (rv == -1)
         {
-            cerr << "Error With Select Function()" << strerror(errno) << endl;
-            ELOG << "PM: " <<"Error With Select Function()" << strerror(errno) << endtl;
+            cerr << "Error With Select Function() " << strerror(errno) << endl;
+            ELOG << "PM: " <<"Error With Select Function() " << strerror(errno) << endtl;
             tcpClient_.disconnect();
             return;
         }
 
         if (rv == 0)
         {
-            cerr << "Data Unavailable..." << strerror(errno) << endl;
-            ELOG << "PM: " << "Data Unavailable..." << strerror(errno) << endtl;
+            cerr << "Data Unavailable... " << strerror(errno) << endl;
+            ELOG << "PM: " << "Data Unavailable... " << strerror(errno) << endtl;
             continue;
         }
 
@@ -105,8 +106,8 @@ TCManager::processMsgs()
 
             if (cin.eof())
             {
-                cerr << "Quit Command Recieved, Exiting..." << strerror(errno) << endl;
-                ELOG << "PM: " << "Quit Command Received, Exiting..." << strerror(errno) << endtl;
+                cerr << "Quit Command Recieved, Exiting... " << strerror(errno) << endl;
+                ELOG << "PM: " << "Quit Command Received, Exiting... " << strerror(errno) << endtl;
                 tcpClient_.disconnect();
                 break;
             }
@@ -146,7 +147,6 @@ TCManager::shutDown()
 {
     controlIF_.shutdownTcpServer();
     ELOG << "Server Shutting Down, No Longer Listening" << endtl;
-    cout << "Server Shutting Down, No Longer Listening" << endl;
     tcpClient_.disconnect();
     ELOG << "TCManager Shutting Down" << endtl; 
 }

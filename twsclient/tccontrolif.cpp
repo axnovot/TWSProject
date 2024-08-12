@@ -22,7 +22,8 @@ TCControlIF::initTcpServer()
 {
     if((server_fd_ = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
     {
-        cerr << "Socket Creation Failed " << "Error: " <<strerror(errno) << endl;
+        cerr << "Socket Creation Failed " << "Error: " << strerror(errno) << endl;
+        ELOG << "Socket Creation Failed " << "Error: " << strerror(errno) << endtl;
         return false;
     }
     
@@ -30,6 +31,7 @@ TCControlIF::initTcpServer()
     if (setsockopt(server_fd_, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)) < 0)
     {
         cerr << "Setsockopt Failed" << "Error: " << strerror(errno) << endl;
+        ELOG << "Setsockopt Failed" << "Error: " << strerror(errno) << endtl;
         return false;
     }
 
@@ -41,12 +43,14 @@ TCControlIF::initTcpServer()
     if(bind(server_fd_, (struct sockaddr*)&control_address, sizeof(control_address)) < 0)
     {
         cerr << "Socket Bind Failed " << "Error: " << strerror(errno) << endl;
+        ELOG << "Socket Bind Failed " << "Error: " << strerror(errno) << endtl;
         return false;
     }
 
     if(listen(server_fd_, 3) < 0)
     {
-        cerr << "Listen Failed" << "Error: " << strerror(errno) << endl;
+        cerr << "Listen Failed " << "Error: " << strerror(errno) << endl;
+        ELOG << "Listen Failed " << "Error: " << strerror(errno) << endtl;
         return false;
     }
     else
@@ -83,6 +87,7 @@ TCControlIF::acceptConnections()
     if((new_socket = accept(server_fd_, (struct sockaddr *)&client_address, (socklen_t *)&addrlen)) < 0)
     {
         cerr << "Accept Failed..." << "Error: " << strerror(errno) << endl;
+        ELOG << "Accept Failed..." << "Error: " << strerror(errno) << endtl;
         return;
     }
 
