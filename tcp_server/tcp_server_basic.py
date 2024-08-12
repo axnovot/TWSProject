@@ -22,7 +22,8 @@ def main():
                     while True:
                         data = client_socket.recv(1024)
                         if not data:
-                            break
+                            print("Client Disconnected")
+                            break;
                         send_data = b"Hello from Server: " + data
                         print(f"Received msg:{data}")
                         print(f"sending:{send_data}")
