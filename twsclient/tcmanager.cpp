@@ -10,8 +10,11 @@
 #include "tcmanager.h"
 #include "tclogger.h"
 #include "tctcpclient.h"
+#include "tccontrolif.h"
 
 using namespace std;
+
+TCControlIF controlIF_;
 
 TCManager::TCManager(const string& remoteHost, int remotePort) 
  : tcpClient_(remoteHost, remotePort) {}
@@ -24,6 +27,18 @@ TCManager::~TCManager()
 bool
 TCManager::init()
 {
+
+    if(!controlIF_.initTcpServer())
+    {
+        cerr << "Server Bind Failed, Unable To Listen To Incoming Connections " <<strerror(errno) << endl;
+        return false;
+    }
+    else
+    {
+        cout << "Server Binded and Listening On Port" << endl;
+        ELOG << "Server Binded and Listening On Port" << endtl;
+    }
+
     if (tcpClient_.connect()) 
     {
         cout << "Connection Successful" << endl;
@@ -32,7 +47,7 @@ TCManager::init()
     } 
     else 
     {
-        cout << "Connection Failed" << endl;
+        cerr << "Connection Failed" << endl;
         return false;
     }
 }
@@ -47,7 +62,14 @@ TCManager::processMsgs()
         FD_SET(STDIN_FILENO, &readFDs);
         FD_SET(tcpClient_.getFD(), &readFDs);
 
-        int max_fd = max(STDIN_FILENO, tcpClient_.getFD()); 
+        int max_fd = max(STDIN_FILENO, tcpClient_.getFD());
+
+        if (controlIF_.acceptingConnections()) 
+        {
+            FD_SET(controlIF_.server_fd(), &readFDs);
+        }
+
+        max_fd = max(max_fd, controlIF_.server_fd());
 
         struct timeval tv;
         tv.tv_sec = 30;
@@ -110,12 +132,21 @@ TCManager::processMsgs()
                 cout << "Message Sucessfully Received!" << endl;
             }
         }
+
+        if (FD_ISSET(controlIF_.server_fd(), &readFDs)) 
+        {
+           controlIF_.acceptConnections(); 
+        }
+
     }
 }
 
 void
 TCManager::shutDown()
 {
+    controlIF_.shutdownTcpServer();
+    ELOG << "Server Shutting Down, No Longer Listening" << endtl;
+    cout << "Server Shutting Down, No Longer Listening" << endl;
     tcpClient_.disconnect();
     ELOG << "TCManager Shutting Down" << endtl; 
 }
