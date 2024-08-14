@@ -5,14 +5,15 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <errno.h>
+#include <algorithm>
+#include <string>
+#include <cctype>
 #include "tccontrolif.h"
 #include "tclogger.h"
 
 using namespace std;
 
-TCControlIF::TCControlIF() {}
-
-TCControlIF::~TCControlIF ()
+TCControlIF::~TCControlIF()
 {
     shutdownTcpServer();
 }
@@ -20,18 +21,18 @@ TCControlIF::~TCControlIF ()
 bool
 TCControlIF::initTcpServer() 
 {
-    if((server_fd_ = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
+    if ((server_fd_ = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
     {
-        cerr << "Socket Creation Failed " << "Error: " << strerror(errno) << endl;
-        ELOG << "Socket Creation Failed " << "Error: " << strerror(errno) << endtl;
+        cerr << "CI: " << "Socket Creation Failed " << "Error: " << strerror(errno) << endl;
+        ELOG << "CI: " << "Socket Creation Failed " << "Error: " << strerror(errno) << endtl;
         return false;
     }
     
     int opt = 1;
     if (setsockopt(server_fd_, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)) < 0)
     {
-        cerr << "Setsockopt Failed" << "Error: " << strerror(errno) << endl;
-        ELOG << "Setsockopt Failed" << "Error: " << strerror(errno) << endtl;
+        cerr << "CI: " << "Setsockopt Failed" << "Error: " << strerror(errno) << endl;
+        ELOG << "CI: " << "Setsockopt Failed" << "Error: " << strerror(errno) << endtl;
         return false;
     }
 
@@ -40,22 +41,23 @@ TCControlIF::initTcpServer()
     control_address.sin_addr.s_addr = INADDR_ANY;
     control_address.sin_port = htons(ServerPort);
 
-    if(bind(server_fd_, (struct sockaddr*)&control_address, sizeof(control_address)) < 0)
+    if (bind(server_fd_, (struct sockaddr*)&control_address, sizeof(control_address)) < 0)
     {
-        cerr << "Socket Bind Failed " << "Error: " << strerror(errno) << endl;
-        ELOG << "Socket Bind Failed " << "Error: " << strerror(errno) << endtl;
+        cerr << "CI: " << "Socket Bind Failed " << "Error: " << strerror(errno) << endl;
+        ELOG << "CI: " << "Socket Bind Failed " << "Error: " << strerror(errno) << endtl;
         return false;
     }
 
-    if(listen(server_fd_, 3) < 0)
+    if (listen(server_fd_, 3) < 0)
     {
-        cerr << "Listen Failed " << "Error: " << strerror(errno) << endl;
-        ELOG << "Listen Failed " << "Error: " << strerror(errno) << endtl;
+        cerr << "CI: " << "Listen Failed " << "Error: " << strerror(errno) << endl;
+        ELOG << "CI: " << "Listen Failed " << "Error: " << strerror(errno) << endtl;
         return false;
     }
     else
     {
-        cout << "TCControlIF Accepting Connections On: " << ServerPort << endl;
+        cout << "CI: " << "TCControlIF Accepting Connections On: " << ServerPort << endl;
+        ELOG << "CI: " << "TCCOntrolIF Accepting Connections On: " << ServerPort << endl;
         return true;
     }
 }
@@ -73,9 +75,9 @@ TCControlIF::acceptingConnections() const
 }
 
 void
-TCControlIF::acceptConnections()
+TCControlIF::acceptConnection()
 {
-    if(!acceptingConnections())
+    if (!acceptingConnections())
     {
         return;
     }
@@ -84,36 +86,40 @@ TCControlIF::acceptConnections()
     struct sockaddr client_address;
     int addrlen = sizeof(client_address);
 
-    if((new_socket = accept(server_fd_, (struct sockaddr *)&client_address, (socklen_t *)&addrlen)) < 0)
+    if ((new_socket = accept(server_fd_, (struct sockaddr *)&client_address, (socklen_t *)&addrlen)) < 0)
     {
-        cerr << "Accept Failed..." << "Error: " << strerror(errno) << endl;
-        ELOG << "Accept Failed..." << "Error: " << strerror(errno) << endtl;
+        cerr << "CI: " << "Accept Failed..." << "Error: " << strerror(errno) << endl;
+        ELOG << "CI: " << "Accept Failed..." << "Error: " << strerror(errno) << endtl;
         return;
     }
 
     char buffer[1024] = {0};
     int bytes_from_newsock = read(new_socket, buffer, sizeof(buffer));
-    if(bytes_from_newsock > 0) 
+    if (bytes_from_newsock > 0) 
     {
-        string response;
         string received_msg(buffer, bytes_from_newsock);
-    
-        cout << "C-IN: " << received_msg << endl;    
+        
+        received_msg.erase(remove_if(received_msg.begin(), received_msg.end(), ::isspace), received_msg.end());
+        string response;
+
+        cout << "CI-IN: " << "<" << received_msg << ">" << endl;
+        ELOG << "CI-IN: " << received_msg << endtl;
 
         if (received_msg == "ping")
         {
-            response = "ACK";
+            response = "ACK \n";
         }
-        else if (received_msg == "Help")
+        else if (received_msg == "help")
         {
-            response = "Supported Commands: ping, help";
+            response = "Supported Commands: ping, help \n";
         }
         else
         {
-            response = received_msg;
+            response = received_msg + ": Is Not Supported \n";
         }
         
         cout << "CI-OUT: " << response << endl;
+        ELOG << "CI-OUT: " << response << endtl;
         send(new_socket, response.c_str(), response.size(), 0);
     }
 
@@ -123,10 +129,13 @@ TCControlIF::acceptConnections()
 void
 TCControlIF::shutdownTcpServer() 
 {
-    if(acceptingConnections())
+    if (acceptingConnections())
     {
         close(server_fd_);
         server_fd_ = -1;
+        
+        cout << "CI-OUT: " << "TCControl Server Shutting Down, No Longer Listening" << endl;
+        ELOG << "CI-OUT: " << "TCControl Server Shutting Down, No Longer Listening" << endtl;
     }
 }
 

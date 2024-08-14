@@ -3,6 +3,7 @@
 
 #include <string>
 #include "tctcpclient.h"
+#include "tccontrolif.h"
 
 using namespace std;
 
@@ -14,8 +15,9 @@ public:
     bool init();
     void processMsgs();
     void shutDown();
+
 private:
-    
+    TCControlIF controlIF_;
     TCTcpClient tcpClient_;
 };
 

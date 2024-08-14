@@ -35,8 +35,8 @@ TCTcpClient::connect()
     fd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (fd_ < 0)
     {
-        cerr << "Socket Connection Creation Failure" << strerror(errno) << endl;
-        ELOG << "PM: " << "Connection To Server Failed" << strerror(errno) << endl;
+        cerr << "TC: " << "Socket Creation Failure" << strerror(errno) << endl;
+        ELOG << "TC: " << "Socket Creation Failure" << strerror(errno) << endtl;
         fd_ = -1;
         return false;
     }
@@ -48,8 +48,8 @@ TCTcpClient::connect()
 
     if (::connect(fd_, (struct sockaddr*)&server_address, sizeof(server_address)) < 0) 
     {
-        cerr << "Connection To Server Failed" << strerror(errno) << endl;
-        ELOG << "PM: " << "Connection To Server Failed" << strerror(errno) << endl;
+        cerr << "TC: " << "Connection To Server Failed" << strerror(errno) << endl;
+        ELOG << "TC: " << "Connection To Server Failed" << strerror(errno) << endtl;
         close(fd_);
         fd_ = -1;
         return false;
@@ -60,11 +60,11 @@ TCTcpClient::connect()
         int flags = fcntl(fd_, F_GETFL, 0);
         if (fcntl(fd_, F_SETFL, flags | O_NONBLOCK) < 0) 
         {
-            cerr << "Error Making Connection Nonblocking :(" << strerror(errno) << endl;
-            ELOG << "PM: " << "Connection To Server Failed" << strerror(errno) << endl;
+            cerr << "TC: " << "Error Making Connection Nonblocking :(" << strerror(errno) << endl;
+            ELOG << "TC: " << "Error Making Connection Nonblocking :(" << strerror(errno) << endtl;
         }
 
-        cout << "Connected To : " << remoteHost_ << ":" << remotePort_ << endl;
+        cout << "TC:" << "Connected To : " << remoteHost_ << ":" << remotePort_ << endl;
         return true;
     }    
 }
@@ -76,8 +76,8 @@ TCTcpClient::disconnect()
     {
         close(fd_);
         fd_ = -1;
-        cout << "Connection Closed" << endl;
-        ELOG << "TCTcpClient Disconnected" << endtl;
+        cout << "TC: " << "TCTcpClient Disconnected" << endl;
+        ELOG << "TC: " << "TCTcpClient Disconnected" << endtl;
     }        
 }
 
@@ -86,12 +86,12 @@ bool
 TCTcpClient::send(const string& msg) 
 {
     int sent = ::send(getFD(),msg.c_str(), msg.size(),0);
-    cout << "TCP OUT: " << msg << endl;
-    ELOG << "PM: " << "TCP OUT: " << msg << endtl;
+    cout << "TC: " << "TCP OUT: " << msg << endl;
+    ELOG << "TC: " << "TCP OUT: " << msg << endtl;
     if (sent < 0) 
     {
-        cerr << "Message Failed" << strerror(errno) << endl;
-        ELOG << "Send Failed" << strerror(errno) <<endtl;
+        cerr << "TC: " << "Send Failed" << strerror(errno) << endl;
+        ELOG << "TC: " << "Send Failed" << strerror(errno) <<endtl;
         return false;
     } 
     else 
@@ -117,15 +117,15 @@ TCTcpClient::receive()
             }
             else 
             {
-                cerr << "Message Reception Failure" << strerror(errno) <<endl;
-                ELOG << "PM: " << "Message Reception Failure" << strerror(errno) << endtl;
+                cerr << "TC: " << "Message Reception Failure" << strerror(errno) <<endl;
+                ELOG << "TC: " << "Message Reception Failure" << strerror(errno) << endtl;
                 return false;
             }
         }
         else if (bytes_received == 0) 
         {
-            cerr << "Server Quit " << strerror(errno) << endl;
-            ELOG << "PM: " <<"Server Quit " << strerror(errno) << endtl;
+            cerr << "TC: " << "Server Quit " << strerror(errno) << endl;
+            ELOG << "TC: " <<"Server Quit " << strerror(errno) << endtl;
             return false;
         } 
         else 
@@ -139,7 +139,7 @@ TCTcpClient::receive()
             }
         }
     }
-    cout << "TCP IN: " << message << endl;
-    ELOG << "PM: " << "TCP IN: " << message << endtl;
+    cout << "TC: " << "TCP IN: " << message << endl;
+    ELOG << "TC: " << "TCP IN: " << message << endtl;
     return true;
 }

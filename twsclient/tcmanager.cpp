@@ -9,15 +9,14 @@
 #include <string.h>
 #include "tcmanager.h"
 #include "tclogger.h"
-#include "tctcpclient.h"
-#include "tccontrolif.h"
+//#include "tctcpclient.h"
+//#include "tccontrolif.h"
 
 using namespace std;
 
-TCControlIF controlIF_;
-
 TCManager::TCManager(const string& remoteHost, int remotePort) 
- : tcpClient_(remoteHost, remotePort) {}
+ : controlIF_()
+ , tcpClient_(remoteHost, remotePort) {}
 
 TCManager::~TCManager() 
 {
@@ -28,29 +27,14 @@ bool
 TCManager::init()
 {
 
-    if(!controlIF_.initTcpServer())
+    if (!controlIF_.initTcpServer() || !tcpClient_.connect())
     {
-        cerr << "Server Bind Failed, Unable To Listen To Incoming Connections " <<strerror(errno) << endl;
-        return false;
+        return false; 
     }
-    else
-    {
-        cout << "Server Binded and Listening On Port" << endl;
-        ELOG << "Server Binded and Listening On Port" << endtl;
-    }
+    cout << "TWSClient Is Ready" << endl;
+    ELOG << "TWSClient Is Ready" << endtl;
 
-    if (tcpClient_.connect()) 
-    {
-        cout << "Connection Successful" << endl;
-        ELOG << "TWSClient Is Ready" << endtl;
-        return true;
-    } 
-    else 
-    {
-        cerr << "Connection Failed " << strerror(errno) << endl;
-        ELOG << "Connection Failed " << strerror(errno) << endl;
-        return false;
-    }
+    return true;
 }
 
 void
@@ -78,14 +62,14 @@ TCManager::processMsgs()
 
         ELOG << "PM: " <<"Calling Select" << endtl;
 
-        ELOG << "PM: " <<"Enter A Message: " << endtl;
-        cout << "Enter A Message: " << endl;
+        ELOG << "PM: " << "Enter A Message: " << endtl;
+        cout << "PM: " << "Enter A Message: " << endl;
 
         int rv = select(max_fd + 1, &readFDs, NULL, NULL, &tv); 
 
         if (rv == -1)
         {
-            cerr << "Error With Select Function() " << strerror(errno) << endl;
+            cerr << "PM: " << "Error With Select Function() " << strerror(errno) << endl;
             ELOG << "PM: " <<"Error With Select Function() " << strerror(errno) << endtl;
             tcpClient_.disconnect();
             return;
@@ -93,7 +77,7 @@ TCManager::processMsgs()
 
         if (rv == 0)
         {
-            cerr << "Data Unavailable... " << strerror(errno) << endl;
+            cerr << "PM: " << "Data Unavailable... " << strerror(errno) << endl;
             ELOG << "PM: " << "Data Unavailable... " << strerror(errno) << endtl;
             continue;
         }
@@ -106,8 +90,8 @@ TCManager::processMsgs()
 
             if (cin.eof())
             {
-                cerr << "Quit Command Recieved, Exiting... " << strerror(errno) << endl;
-                ELOG << "PM: " << "Quit Command Received, Exiting... " << strerror(errno) << endtl;
+                cerr << "PM: " <<"Quit Command Recieved, Exiting... " << strerror(errno) << endl;
+                ELOG << "PM: " <<"Quit Command Received, Exiting... " << strerror(errno) << endtl;
                 tcpClient_.disconnect();
                 break;
             }
@@ -118,7 +102,7 @@ TCManager::processMsgs()
             } 
             else 
             {
-                cout << "Message Successfully Sent!" << endl;
+                cout << "PM: " << "Message Successfully Sent!" << endl;
             }
         }
 
@@ -130,13 +114,13 @@ TCManager::processMsgs()
             } 
             else 
             {
-                cout << "Message Sucessfully Received!" << endl;
+                cout << "PM: " << "Message Sucessfully Received!" << endl;
             }
         }
 
         if (FD_ISSET(controlIF_.server_fd(), &readFDs)) 
         {
-           controlIF_.acceptConnections(); 
+           controlIF_.acceptConnection(); 
         }
 
     }
@@ -146,7 +130,6 @@ void
 TCManager::shutDown()
 {
     controlIF_.shutdownTcpServer();
-    ELOG << "Server Shutting Down, No Longer Listening" << endtl;
     tcpClient_.disconnect();
     ELOG << "TCManager Shutting Down" << endtl; 
 }

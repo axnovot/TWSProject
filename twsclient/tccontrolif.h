@@ -5,7 +5,6 @@ using namespace std;
 
 class TCControlIF {
 public:
-    TCControlIF();
     ~TCControlIF();
 
     bool initTcpServer();
@@ -13,12 +12,12 @@ public:
     int server_fd() const;
     
     bool acceptingConnections() const;
-    void acceptConnections();
+    void acceptConnection();
 
     void shutdownTcpServer();
 
 private:
-    constexpr static int ServerPort{32201};
+    const int ServerPort{32001};
     int server_fd_{-1};
 };
 
