@@ -9,9 +9,9 @@ public:
 
     bool initTcpServer();
 
-    int server_fd() const;
+    int server_fd() const {return server_fd_;}
     
-    bool acceptingConnections() const;
+    bool acceptingConnections() const {return server_fd() >= 0;}
     void acceptConnection();
 
     void shutdownTcpServer();

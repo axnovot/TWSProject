@@ -64,7 +64,8 @@ TCTcpClient::connect()
             ELOG << "TC: " << "Error Making Connection Nonblocking :(" << strerror(errno) << endtl;
         }
 
-        cout << "TC:" << "Connected To : " << remoteHost_ << ":" << remotePort_ << endl;
+        cout << "TC: " << "Connected To : " << remoteHost_ << ":" << remotePort_ << endl;
+        ELOG << "TC: " << "Connected To : " << remoteHost_ << "." << remotePort_ << endtl;
         return true;
     }    
 }

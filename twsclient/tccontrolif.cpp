@@ -57,21 +57,9 @@ TCControlIF::initTcpServer()
     else
     {
         cout << "CI: " << "TCControlIF Accepting Connections On: " << ServerPort << endl;
-        ELOG << "CI: " << "TCCOntrolIF Accepting Connections On: " << ServerPort << endl;
+        ELOG << "CI: " << "TCControlIF Accepting Connections On: " << ServerPort << endl;
         return true;
     }
-}
-
-int
-TCControlIF::server_fd() const
-{
-    return server_fd_;
-}
-
-bool
-TCControlIF::acceptingConnections() const
-{
-    return server_fd() >= 0;
 }
 
 void
@@ -123,7 +111,7 @@ TCControlIF::acceptConnection()
         send(new_socket, response.c_str(), response.size(), 0);
     }
 
-    close (new_socket);
+    close(new_socket);
 }
 
 void
@@ -134,13 +122,7 @@ TCControlIF::shutdownTcpServer()
         close(server_fd_);
         server_fd_ = -1;
         
-        cout << "CI-OUT: " << "TCControl Server Shutting Down, No Longer Listening" << endl;
-        ELOG << "CI-OUT: " << "TCControl Server Shutting Down, No Longer Listening" << endtl;
+        cout << "CI: " << "TCControl Server Shutting Down, No Longer Listening On " << ServerPort << endl;
+        ELOG << "CI: " << "TCControl Server Shutting Down, No Longer Listening On " << ServerPort << endtl;
     }
 }
-
-
-
-
-
-
