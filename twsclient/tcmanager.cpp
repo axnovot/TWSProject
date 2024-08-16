@@ -44,10 +44,9 @@ TCManager::processMsgs()
     {
         fd_set readFDs;
         FD_ZERO(&readFDs);
-        FD_SET(STDIN_FILENO, &readFDs);
         FD_SET(tcpClient_.getFD(), &readFDs);
 
-        int max_fd = max(STDIN_FILENO, tcpClient_.getFD());
+        int max_fd = tcpClient_.getFD();
 
         if (controlIF_.acceptingConnections()) 
         {
@@ -80,31 +79,7 @@ TCManager::processMsgs()
             cerr << "PM: " << "Data Unavailable... " << strerror(errno) << endl;
             ELOG << "PM: " << "Data Unavailable... " << strerror(errno) << endtl;
             continue;
-        }
-
-        if (FD_ISSET(STDIN_FILENO, &readFDs))
-        { 
-            string input;
-            getline(cin, input);
-            ELOG << "PM: " << "Message Entered: " << input << endtl;
-
-            if (cin.eof())
-            {
-                cerr << "PM: " <<"Quit Command Recieved, Exiting... " << strerror(errno) << endl;
-                ELOG << "PM: " <<"Quit Command Received, Exiting... " << strerror(errno) << endtl;
-                tcpClient_.disconnect();
-                break;
-            }
-
-            if (!tcpClient_.send(input))
-            {
-                return;
-            } 
-            else 
-            {
-                cout << "PM: " << "Message Successfully Sent!" << endl;
-            }
-        }
+        } 
 
         if (FD_ISSET(tcpClient_.getFD(), &readFDs))
         {   

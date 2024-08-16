@@ -17,6 +17,7 @@ public:
     void shutdownTcpServer();
 
 private:
+    string handleControlMsg(const string& received_msg);
     const int ServerPort{32001};
     int server_fd_{-1};
 };

@@ -10,7 +10,7 @@
 #include <cctype>
 #include "tccontrolif.h"
 #include "tclogger.h"
-//test
+//testing again
 using namespace std;
 
 TCControlIF::~TCControlIF()
@@ -86,33 +86,44 @@ TCControlIF::acceptConnection()
     if (bytes_from_newsock > 0) 
     {
         string received_msg(buffer, bytes_from_newsock);
-        
         received_msg.erase(remove_if(received_msg.begin(), received_msg.end(), ::isspace), received_msg.end());
-        string response;
 
-        cout << "CI-IN: " << "<" << received_msg << ">" << endl;
-        ELOG << "CI-IN: " << received_msg << endtl;
+        string serverResponse = handleControlMsg(received_msg);
 
-        if (received_msg == "ping")
-        {
-            response = "ACK \n";
-        }
-        else if (received_msg == "help")
-        {
-            response = "Supported Commands: ping, help \n";
-        }
-        else
-        {
-            response = received_msg + ": Is Not Supported \n";
-        }
-        
-        cout << "CI-OUT: " << response << endl;
-        ELOG << "CI-OUT: " << response << endtl;
-        send(new_socket, response.c_str(), response.size(), 0);
+        cout << "CI-OUT: " << serverResponse << endl;
+        ELOG << "CI-OUT: " << serverResponse << endtl;
+        send(new_socket, serverResponse.c_str(), serverResponse.size(), 0);
+       
     }
 
     close(new_socket);
+
 }
+
+string
+TCControlIF::handleControlMsg(const string& received_msg)
+{
+    string response;
+
+    cout << "CI-IN: " << "<" << received_msg << ">" << endl;
+    ELOG << "CI-IN: " << received_msg << endtl;
+
+    if (received_msg == "ping")
+    {
+        response = "ACK \n";
+    }
+    else if (received_msg == "help")
+    {
+        response = "Supported Commands: ping, help \n";
+    }
+    else
+    {
+        response = received_msg + ": Is Not Supported \n";
+    }
+
+    return response;
+}
+
 
 void
 TCControlIF::shutdownTcpServer() 
