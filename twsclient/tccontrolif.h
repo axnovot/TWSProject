@@ -1,6 +1,9 @@
 #ifndef tccontrolif_h_INCLUDED
 #define tccontrolif_h_INCLUDED
 
+#include <vector>
+#include <string>
+
 using namespace std;
 
 class TCControlIF {
@@ -17,7 +20,9 @@ public:
     void shutdownTcpServer();
 
 private:
-    string handleControlMsg(const string& received_msg);
+    string handleControlMsg(const string& command, const vector<string>& args) const;
+    vector<string> splitMsg(const string& received_msg) const;
+
     const int ServerPort{32001};
     int server_fd_{-1};
 };

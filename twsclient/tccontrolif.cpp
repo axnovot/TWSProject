@@ -8,9 +8,10 @@
 #include <algorithm>
 #include <string>
 #include <cctype>
+#include <vector>
 #include "tccontrolif.h"
 #include "tclogger.h"
-//testing again
+
 using namespace std;
 
 TCControlIF::~TCControlIF()
@@ -85,14 +86,22 @@ TCControlIF::acceptConnection()
     int bytes_from_newsock = read(new_socket, buffer, sizeof(buffer));
     if (bytes_from_newsock > 0) 
     {
+        
         string received_msg(buffer, bytes_from_newsock);
-        received_msg.erase(remove_if(received_msg.begin(), received_msg.end(), ::isspace), received_msg.end());
+        cout << "CI-IN: " << "<" << received_msg << ">" << endl;
+        ELOG << "CI-IN: " << received_msg << endtl;
 
-        string serverResponse = handleControlMsg(received_msg);
+        //received_msg.erase(remove_if(received_msg.begin(), received_msg.end(), ::isspace), received_msg.end());
+        vector<string> words = splitMsg(received_msg);
+        const string command = words[0];
+        words.erase(words.begin());
+        const vector<string> args = words;
+    
+        const string ciResponse = handleControlMsg(command, args);
 
-        cout << "CI-OUT: " << serverResponse << endl;
-        ELOG << "CI-OUT: " << serverResponse << endtl;
-        send(new_socket, serverResponse.c_str(), serverResponse.size(), 0);
+        cout << "CI-OUT: " << ciResponse << endl;
+        ELOG << "CI-OUT: " << ciResponse << endtl;
+        send(new_socket, ciResponse.c_str(), ciResponse.size(), 0);
        
     }
 
@@ -101,29 +110,58 @@ TCControlIF::acceptConnection()
 }
 
 string
-TCControlIF::handleControlMsg(const string& received_msg)
+TCControlIF::handleControlMsg(const string& command, const vector<string>& args) const
 {
     string response;
 
-    cout << "CI-IN: " << "<" << received_msg << ">" << endl;
-    ELOG << "CI-IN: " << received_msg << endtl;
-
-    if (received_msg == "ping")
+    (void)args;
+    
+    if (command == "ping")
     {
         response = "ACK \n";
     }
-    else if (received_msg == "help")
+    else if (command == "help")
     {
         response = "Supported Commands: ping, help \n";
     }
     else
     {
-        response = received_msg + ": Is Not Supported \n";
+        response = command + ": Is Not Supported \n";
     }
 
     return response;
 }
 
+vector<string>
+TCControlIF::splitMsg(const string& received_msg) const 
+{
+    vector<string> arguments;
+    string word;
+
+    for(string::size_type i = 0; i < received_msg.size(); ++i) 
+    {
+        if(!isspace(received_msg[i])) 
+        {
+            word += received_msg[i];
+        }
+        else 
+        {
+            if(!word.empty()) 
+            {
+                arguments.push_back(word);
+                word.clear();
+            }
+        }
+    }
+
+    if(!word.empty()) 
+    {
+        arguments.push_back(word);
+    }
+
+    return arguments;
+
+}
 
 void
 TCControlIF::shutdownTcpServer() 
