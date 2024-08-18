@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <string>
 #include <cctype>
-#include <vector>
 #include "tccontrolif.h"
 #include "tclogger.h"
 
@@ -91,11 +90,10 @@ TCControlIF::acceptConnection()
         cout << "CI-IN: " << "<" << received_msg << ">" << endl;
         ELOG << "CI-IN: " << received_msg << endtl;
 
-        //received_msg.erase(remove_if(received_msg.begin(), received_msg.end(), ::isspace), received_msg.end());
         vector<string> words = splitMsg(received_msg);
         const string command = words[0];
         words.erase(words.begin());
-        const vector<string> args = words;
+        const vector<string>& args = words;
     
         const string ciResponse = handleControlMsg(command, args);
 
@@ -135,31 +133,31 @@ TCControlIF::handleControlMsg(const string& command, const vector<string>& args)
 vector<string>
 TCControlIF::splitMsg(const string& received_msg) const 
 {
-    vector<string> arguments;
+    vector<string> words;
     string word;
 
-    for(string::size_type i = 0; i < received_msg.size(); ++i) 
+    for (string::size_type i = 0; i < received_msg.size(); ++i) 
     {
-        if(!isspace(received_msg[i])) 
+        if (!isspace(received_msg[i])) 
         {
             word += received_msg[i];
         }
         else 
         {
-            if(!word.empty()) 
+            if (!word.empty()) 
             {
-                arguments.push_back(word);
+                words.push_back(word);
                 word.clear();
             }
         }
     }
 
-    if(!word.empty()) 
+    if (!word.empty()) 
     {
-        arguments.push_back(word);
+        words.push_back(word);
     }
 
-    return arguments;
+    return words;
 
 }
 
