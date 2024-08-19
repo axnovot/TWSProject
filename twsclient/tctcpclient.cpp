@@ -84,11 +84,11 @@ TCTcpClient::disconnect()
 
 
 bool
-TCTcpClient::send(const string& msg) 
+TCTcpClient::send(const string& msg) const
 {
     int sent = ::send(getFD(),msg.c_str(), msg.size(),0);
-    cout << "TC: " << "TCP OUT: " << msg << endl;
-    ELOG << "TC: " << "TCP OUT: " << msg << endtl;
+    cout << "TCP OUT: " << msg << endl;
+    ELOG << "TCP OUT: " << msg << endtl;
     if (sent < 0) 
     {
         cerr << "TC: " << "Send Failed" << strerror(errno) << endl;
@@ -140,7 +140,7 @@ TCTcpClient::receive()
             }
         }
     }
-    cout << "TC: " << "TCP IN: " << message << endl;
-    ELOG << "TC: " << "TCP IN: " << message << endtl;
+    cout << "TCP IN: " << message << endl;
+    ELOG << "TCP IN: " << message << endtl;
     return true;
 }

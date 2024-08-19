@@ -4,10 +4,13 @@
 #include <vector>
 #include <string>
 
+class TCManager;
+
 using namespace std;
 
 class TCControlIF {
 public:
+    TCControlIF(TCManager& tcManager);
     ~TCControlIF();
 
     bool initTcpServer();
@@ -25,6 +28,8 @@ private:
 
     const int ServerPort{32001};
     int server_fd_{-1};
+
+    TCManager& tcManager_; 
 };
 
 #endif

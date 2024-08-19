@@ -17,7 +17,7 @@ public:
    
     int getFD() const {return fd_;}
 
-    bool send(const string& msg);
+    bool send(const string& msg) const;
     bool receive();
     
     void processMsgs();

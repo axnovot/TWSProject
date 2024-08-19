@@ -15,7 +15,7 @@
 using namespace std;
 
 TCManager::TCManager(const string& remoteHost, int remotePort) 
- : controlIF_()
+ : controlIF_(*this)
  , tcpClient_(remoteHost, remotePort) {}
 
 TCManager::~TCManager() 
@@ -61,8 +61,8 @@ TCManager::processMsgs()
 
         ELOG << "PM: " <<"Calling Select" << endtl;
 
-        ELOG << "PM: " << "Enter A Message: " << endtl;
-        cout << "PM: " << "Enter A Message: " << endl;
+        //ELOG << "PM: " << "Enter A Message: " << endtl;
+        //cout << "PM: " << "Enter A Message: " << endl;
 
         int rv = select(max_fd + 1, &readFDs, NULL, NULL, &tv); 
 

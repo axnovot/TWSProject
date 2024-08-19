@@ -10,8 +10,11 @@
 #include <cctype>
 #include "tccontrolif.h"
 #include "tclogger.h"
+#include "tcmanager.h"
 
 using namespace std;
+
+TCControlIF::TCControlIF(TCManager& tcManager) : tcManager_(tcManager) {}
 
 TCControlIF::~TCControlIF()
 {
@@ -112,7 +115,7 @@ TCControlIF::handleControlMsg(const string& command, const vector<string>& args)
 {
     string response;
 
-    (void)args;
+    //(void)args;
     
     if (command == "ping")
     {
@@ -122,7 +125,22 @@ TCControlIF::handleControlMsg(const string& command, const vector<string>& args)
     {
         response = "Supported Commands: ping, help \n";
     }
-    else
+    else if (command == "send" && !args.empty())
+    {   
+        string msg;
+        for(string::size_type i = 0; i < args.size(); ++i) 
+        {
+            msg += args[i];
+            if(i < args.size()-1) 
+            {
+                msg += " ";
+            }
+        }
+        tcManager_.tcpClient().send(msg);
+        response = "Sent: " + msg + "\n";
+    }
+
+    else 
     {
         response = command + ": Is Not Supported \n";
     }
