@@ -14,6 +14,8 @@
 
 using namespace std;
 
+extern bool keepRunning;
+
 TCControlIF::TCControlIF(TCManager& tcManager) : tcManager_(tcManager) {}
 
 TCControlIF::~TCControlIF()
@@ -90,7 +92,7 @@ TCControlIF::acceptConnection()
     {
         
         string received_msg(buffer, bytes_from_newsock);
-        cout << "CI-IN: " << "<" << received_msg << ">" << endl;
+        cout << "CI-IN: " << received_msg << endl;
         ELOG << "CI-IN: " << received_msg << endtl;
 
         vector<string> words = splitMsg(received_msg);
@@ -114,8 +116,6 @@ string
 TCControlIF::handleControlMsg(const string& command, const vector<string>& args) const
 {
     string response;
-
-    //(void)args;
     
     if (command == "ping")
     {
@@ -123,15 +123,15 @@ TCControlIF::handleControlMsg(const string& command, const vector<string>& args)
     }
     else if (command == "help")
     {
-        response = "Supported Commands: ping, help \n";
+        response = "Supported Commands: ping, help, send, quit \n";
     }
     else if (command == "send" && !args.empty())
     {   
         string msg;
-        for(string::size_type i = 0; i < args.size(); ++i) 
+        for (string::size_type i = 0; i < args.size(); ++i) 
         {
             msg += args[i];
-            if(i < args.size()-1) 
+            if (i < args.size()-1) 
             {
                 msg += " ";
             }
@@ -139,7 +139,11 @@ TCControlIF::handleControlMsg(const string& command, const vector<string>& args)
         tcManager_.tcpClient().send(msg);
         response = "Sent: " + msg + "\n";
     }
-
+    else if (command == "quit") 
+    {
+        keepRunning = false;
+        response = "Quit Command Called ";
+    }
     else 
     {
         response = command + ": Is Not Supported \n";

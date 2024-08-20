@@ -87,8 +87,8 @@ bool
 TCTcpClient::send(const string& msg) const
 {
     int sent = ::send(getFD(),msg.c_str(), msg.size(),0);
-    cout << "TCP OUT: " << msg << endl;
-    ELOG << "TCP OUT: " << msg << endtl;
+    cout << "TC-OUT: " << msg << endl;
+    ELOG << "TC-OUT: " << msg << endtl;
     if (sent < 0) 
     {
         cerr << "TC: " << "Send Failed" << strerror(errno) << endl;
@@ -140,7 +140,7 @@ TCTcpClient::receive()
             }
         }
     }
-    cout << "TCP IN: " << message << endl;
-    ELOG << "TCP IN: " << message << endtl;
+    cout << "TC-IN: " << message << endl;
+    ELOG << "TC-IN: " << message << endtl;
     return true;
 }

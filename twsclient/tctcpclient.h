@@ -12,10 +12,10 @@ public:
 
     bool connect();
     
-    bool connected() const {return fd_ >= 0;}
+    bool connected() const { return fd_ >= 0; }
     void disconnect();
    
-    int getFD() const {return fd_;}
+    int getFD() const { return fd_; }
 
     bool send(const string& msg) const;
     bool receive();

@@ -16,7 +16,7 @@ public:
     void processMsgs();
     void shutDown();
 
-    const TCTcpClient& tcpClient() const {return tcpClient_;}
+    const TCTcpClient& tcpClient() const { return tcpClient_; }
 
 private:
     TCControlIF controlIF_;
