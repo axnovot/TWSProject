@@ -18,9 +18,8 @@ public:
     int getFD() const { return fd_; }
 
     bool send(const string& msg) const;
-    bool receive();
+    bool receive() const;
     
-    void processMsgs();
 private:
     string remoteHost_;
     int remotePort_;

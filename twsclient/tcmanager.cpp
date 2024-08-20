@@ -39,9 +39,7 @@ TCManager::init()
 
 void
 TCManager::processMsgs()
-{
-    
-    
+{    
     fd_set readFDs;
     FD_ZERO(&readFDs);
     FD_SET(tcpClient_.getFD(), &readFDs);

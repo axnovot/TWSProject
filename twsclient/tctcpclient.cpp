@@ -24,7 +24,7 @@ TCTcpClient::TCTcpClient(const string& remoteHost, int remotePort)
 }
 
 
-TCTcpClient::~TCTcpClient() 
+TCTcpClient::~TCTcpClient()
 {
     disconnect();
 }
@@ -102,7 +102,7 @@ TCTcpClient::send(const string& msg) const
 }
 
 bool
-TCTcpClient::receive() 
+TCTcpClient::receive() const
 { 
     const int maxRecvSize = 10;
     char buffer[maxRecvSize + 1];

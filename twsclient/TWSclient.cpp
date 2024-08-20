@@ -6,7 +6,6 @@
 #include "tcmanager.h"
 #include "tccontrolif.h"
 
-
 volatile bool keepRunning = false;
 
 void sigint_handler(int) 
