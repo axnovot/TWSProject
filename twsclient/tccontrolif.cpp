@@ -14,9 +14,10 @@
 
 using namespace std;
 
-extern bool keepRunning;
+extern bool KeepRunning;
 
-TCControlIF::TCControlIF(TCManager& tcManager) : tcManager_(tcManager) {}
+TCControlIF::TCControlIF(const TCManager& tcManager) 
+: tcManager_(tcManager) {}
 
 TCControlIF::~TCControlIF()
 {
@@ -119,11 +120,11 @@ TCControlIF::handleControlMsg(const string& command, const vector<string>& args)
     
     if (command == "ping")
     {
-        response = "ACK \n";
+        response = "ACK";
     }
     else if (command == "help")
     {
-        response = "Supported Commands: ping, help, send, quit \n";
+        response = "Supported Commands: ping, help, send, quit";
     }
     else if (command == "send" && !args.empty())
     {   
@@ -137,19 +138,19 @@ TCControlIF::handleControlMsg(const string& command, const vector<string>& args)
             }
         }
         tcManager_.tcpClient().send(msg);
-        response = "Sent: " + msg + "\n";
+        response = "Sent: " + msg;
     }
     else if (command == "quit") 
     {
-        keepRunning = false;
-        response = "Quit Command Called ";
+        KeepRunning = false;
+        response = "Quit Command Called";
     }
     else 
     {
-        response = command + ": Is Not Supported \n";
+        response = command + ": Is Not Supported";
     }
 
-    return response;
+    return response + "\n";
 }
 
 vector<string>

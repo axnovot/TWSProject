@@ -4,17 +4,17 @@
 #include "tctcpclient.h"
 #include "tcconfig.h"
 #include "tcmanager.h"
-#include "tccontrolif.h"
+//#include "tccontrolif.h"
 
-volatile bool keepRunning = false;
+volatile bool KeepRunning = false;
 
 void sigint_handler(int) 
 {
-    keepRunning = false;
+    KeepRunning = false;
 }
 
 
-int main(){
+int main() {
     ELOG << "TWSClient Starting" << endtl;
 
     TCConfig& tcconfig = TCConfig::getInstance();
@@ -25,8 +25,8 @@ int main(){
 
     if (theManager.init()) 
     {
-        keepRunning = true;
-        while (keepRunning == true)
+        KeepRunning = true;
+        while (KeepRunning == true)
         {        
             theManager.processMsgs();
         }

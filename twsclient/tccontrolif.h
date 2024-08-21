@@ -12,7 +12,7 @@ using namespace std;
 
 class TCControlIF {
 public:
-    TCControlIF(TCManager& tcManager);
+    TCControlIF(const TCManager& tcManager);
     ~TCControlIF();
 
     bool initTcpServer();

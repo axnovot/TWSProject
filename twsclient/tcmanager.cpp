@@ -66,8 +66,8 @@ TCManager::processMsgs()
 
     if (rv == -1)
     {
-        cerr << "PM: " << "Error With Select Function() " << strerror(errno) << endl;
-        ELOG << "PM: " <<"Error With Select Function() " << strerror(errno) << endtl;
+        cerr << "PM: " << "Error With Select Function: " << strerror(errno) << endl;
+        ELOG << "PM: " << "Error With Select Function: " << strerror(errno) << endtl;
         tcpClient_.disconnect();
         return;
     }
