@@ -26,10 +26,10 @@ int main() {
     if (theManager.init()) 
     {
         KeepRunning = true;
-        while (KeepRunning == true)
-        {        
-            theManager.processMsgs();
-        }
+    }
+    while (KeepRunning == true)
+    {        
+        theManager.processMsgs();
     }
     theManager.shutDown();
 }

@@ -17,7 +17,9 @@ using namespace std;
 extern bool KeepRunning;
 
 TCControlIF::TCControlIF(const TCManager& tcManager) 
-: tcManager_(tcManager) {}
+ : tcManager_(tcManager) 
+{
+}
 
 TCControlIF::~TCControlIF()
 {
