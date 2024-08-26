@@ -3,8 +3,9 @@ from ibapi.wrapper import *
 import time
 import threading
 
-def PrintTid():
+def PTid():
     return f"ThreadID: {threading.get_native_id()}"
+
 
 class IBApi(EClient, EWrapper):
     def __init__(self):
@@ -12,18 +13,26 @@ class IBApi(EClient, EWrapper):
 
     def nextValidId(self, tranId):
         self.tranId = tranId
-        print("NextValidId:",tranId,PrintTid())
+        print(PTid(), "NextValidId:", tranId)
 
     def nextId(self):
         self.tranId += 1
         return self.tranId
 
     def currentTime(self, time):
-        print("Time:",time,PrintTid())
+        print(PTid(), "Time:", time,)
 
     def error(self, reqId, errorCode, errorString, advancedOrderReject):
-        print(f"reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}",PrintTid())
+        print(PTid(), f"reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}")
 
+    def contractDetails(self, reqId, contractDetails):
+        attrs = vars(contractDetails)
+        print(PTid(), "\n".join(f"{name}:{value}" for name, value in attrs.items()))
+
+    def contractDetailsEnd(self, reqId):
+        print(PTid(), "End Of Contract Details")
+
+"""
 app = IBApi()
 app.connect("127.0.0.1", 7497, 0)
 
@@ -37,3 +46,4 @@ for i in range(0,5):
 
 app.disconnect()
 time.sleep(1)
+"""
