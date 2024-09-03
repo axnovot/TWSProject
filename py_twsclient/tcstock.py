@@ -10,3 +10,6 @@ class TCStock:
         self.mycontract.exchange = "SMART"
 
         self.contractID = 0
+
+    def setContractID(self, conid):
+        self.contractID = conid

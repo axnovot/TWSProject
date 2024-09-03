@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-from manager import Manager
+from tcmanager import TCManager
 
 
 def main():
-    manager = Manager()
+    manager = TCManager()
 
     manager.init()
 

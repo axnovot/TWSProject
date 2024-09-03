@@ -1,10 +1,12 @@
 from tcapi import TCApi
 from tcstock import TCStock
 from ibapi.contract import Contract
+from ibapi.ticktype import TickTypeEnum
+from timefile import PTid
 import threading
 import time
 
-class Manager:
+class TCManager:
     def __init__(self):
         self.api = TCApi(self)
         self.theStock = None
@@ -16,27 +18,25 @@ class Manager:
         time.sleep(1)
 
         self.api.reqCurrentTime()
-        self.api.time_received.wait()
+        self.api.information_received.wait()
+        self.api.information_received.clear()
 
-        """
-        mycontract = Contract()
-        mycontract.symbol = "IBM"
-        mycontract.secType = "STK"
-        mycontract.currency = "USD"
-        mycontract.exchange = "SMART"
-        """
+
+
         self.theStock = TCStock()
 
         self.api.reqContractDetails(self.api.nextId(), self.theStock.mycontract)
-        self.api.contract_received.wait()
+        self.api.information_received.wait()
+
 
     def addContractDetails(self, contractID):
         print(f"Manager Received Contract ID: {contractID}")
         if self.theStock:
-            self.theStock.contractID = contractID
+            self.theStock.setContractID = contractID
+            """self.reqMD()"""
         else:
-            print("TCStock Class Not Initialized")
+            print(PTid, "TCStock Class Not Initialized")
 
     def stop(self):
         self.api.disconnect()
-        time.sleep(1)
+        self.api.information_received.wait()

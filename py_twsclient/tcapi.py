@@ -1,5 +1,7 @@
 from ibapi.client import *
 from ibapi.wrapper import *
+from ibapi.ticktype import TickTypeEnum
+from timefile import PTid
 import time
 import threading
 from datetime import datetime
@@ -13,8 +15,7 @@ def PTid():
 class TCApi(EClient, EWrapper):
     def __init__(self, mgr):
         EClient.__init__(self, self)
-        self.time_received = threading.Event()
-        self.contract_received = threading.Event()
+        self.information_received = threading.Event()
         self.mgr = mgr
 
     def nextValidId(self, tranId):
@@ -29,7 +30,7 @@ class TCApi(EClient, EWrapper):
         formtime = datetime.fromtimestamp(unix_time)
         date_time = formtime.strftime("%Y%m%d %H:%M:%S")
         print(PTid(), "Time:", date_time,)
-        self.time_received.set()
+        self.information_received.set()
 
     def error(self, reqId, errorCode, errorString, advancedOrderReject):
         print(PTid(), f"reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}")
@@ -44,4 +45,7 @@ class TCApi(EClient, EWrapper):
 
     def contractDetailsEnd(self, reqId):
         print(PTid(), "End Of Contract Details")
-        self.contract_received.set()
+        self.information_received.set()
+
+
+
