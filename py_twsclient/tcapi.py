@@ -6,12 +6,6 @@ import time
 import threading
 from datetime import datetime
 
-def PTid():
-    timenow = datetime.now()
-    formatted = timenow.strftime("%H:%M:%S.%f")[:-3]
-    return f"{formatted} ThreadID: {threading.get_native_id()}"
-
-
 class TCApi(EClient, EWrapper):
     def __init__(self, mgr):
         EClient.__init__(self, self)
