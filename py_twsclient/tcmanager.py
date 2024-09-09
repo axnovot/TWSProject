@@ -2,7 +2,7 @@ from tcapi import TCApi
 from tcstock import TCStock
 from ibapi.contract import Contract
 from ibapi.ticktype import TickTypeEnum
-from timefile import PTid
+from tcutil import PTid, tprint
 import threading
 import time
 
@@ -27,16 +27,18 @@ class TCManager:
 
         self.api.reqContractDetails(self.api.nextId(), self.theStock.mycontract)
         self.api.information_received.wait()
+        self.api.information_received.clear()
 
 
     def addContractDetails(self, contractID):
-        print(f"Manager Received Contract ID: {contractID}")
+        tprint(f"Manager Received Contract ID: {contractID}")
         if self.theStock:
-            self.theStock.setContractID = contractID
-            """self.reqMD()"""
+            self.theStock.setContractID(contractID)
         else:
-            print(PTid, "TCStock Class Not Initialized")
+            tprint("TCStock Class Not Initialized")
 
     def stop(self):
         self.api.disconnect()
-        self.api.information_received.wait()
+        tprint("TCM Stopping")
+        #self.api.information_received.wait()
+        #self.api.information_received.clear()

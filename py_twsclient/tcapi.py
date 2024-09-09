@@ -1,7 +1,7 @@
 from ibapi.client import *
 from ibapi.wrapper import *
 from ibapi.ticktype import TickTypeEnum
-from timefile import PTid
+from tcutil import PTid, tprint
 import time
 import threading
 from datetime import datetime
@@ -14,7 +14,7 @@ class TCApi(EClient, EWrapper):
 
     def nextValidId(self, tranId):
         self.tranId = tranId
-        print(PTid(), "NextValidId:", tranId)
+        tprint("NextValidId:", tranId)
 
     def nextId(self):
         self.tranId += 1
@@ -27,18 +27,18 @@ class TCApi(EClient, EWrapper):
         self.information_received.set()
 
     def error(self, reqId, errorCode, errorString, advancedOrderReject):
-        print(PTid(), f"reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}")
+        tprint(f"reqId: {reqId}, errorCode: {errorCode}, errorString: {errorString}, orderReject: {advancedOrderReject}")
 
     def contractDetails(self, reqId, contractDetails):
-        print(PTid(), f"Contract: {contractDetails.contract}")
-        print(PTid(), f"validExchanges: {contractDetails.validExchanges}")
-        print(PTid(), f"tradingHours: {contractDetails.tradingHours}")
-        print(PTid(), f"liquidHours: {contractDetails.liquidHours}")
+        tprint(f"Contract: {contractDetails.contract}")
+        tprint(f"validExchanges: {contractDetails.validExchanges}")
+        tprint(f"tradingHours: {contractDetails.tradingHours}")
+        tprint(f"liquidHours: {contractDetails.liquidHours}")
 
         self.mgr.addContractDetails(contractDetails.contract.conId)
 
     def contractDetailsEnd(self, reqId):
-        print(PTid(), "End Of Contract Details")
+        tprint("End Of Contract Details")
         self.information_received.set()
 
 
