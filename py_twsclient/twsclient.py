@@ -8,6 +8,8 @@ def main():
 
     manager.init()
 
+    manager.reqClosingPrices()
+
     manager.stop()
 
 

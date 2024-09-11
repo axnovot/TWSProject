@@ -9,7 +9,7 @@ import time
 class TCManager:
     def __init__(self):
         self.api = TCApi(self)
-        self.theStock = None
+        self.theStock = TCStock()
 
     def init(self):
         self.api.connect("127.0.0.1", 7497, 0)
@@ -21,9 +21,6 @@ class TCManager:
         self.api.information_received.wait()
         self.api.information_received.clear()
 
-
-
-        self.theStock = TCStock()
 
         self.api.reqContractDetails(self.api.nextId(), self.theStock.mycontract)
         self.api.information_received.wait()
@@ -37,8 +34,15 @@ class TCManager:
         else:
             tprint("TCStock Class Not Initialized")
 
+    def reqClosingPrices(self):
+        FROZEN = 2
+        DELAYED = 3
+
+        self.api.reqMarketDataType(FROZEN)
+        self.api.reqMktData(self.api.nextId(), self.theStock.contract(), "232", False, False, [])
+        tprint("Market Data Requested Successfully")
+
     def stop(self):
         self.api.disconnect()
         tprint("TCM Stopping")
-        #self.api.information_received.wait()
-        #self.api.information_received.clear()
+

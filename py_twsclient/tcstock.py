@@ -13,3 +13,6 @@ class TCStock:
 
     def setContractID(self, conid):
         self.contractID = conid
+
+    def contract(self):
+        return self.mycontract

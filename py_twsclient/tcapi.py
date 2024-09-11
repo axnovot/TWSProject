@@ -23,7 +23,7 @@ class TCApi(EClient, EWrapper):
     def currentTime(self, unix_time):
         formtime = datetime.fromtimestamp(unix_time)
         date_time = formtime.strftime("%Y%m%d %H:%M:%S")
-        print(PTid(), "Time:", date_time,)
+        tprint("Time:", date_time,)
         self.information_received.set()
 
     def error(self, reqId, errorCode, errorString, advancedOrderReject):
@@ -40,6 +40,12 @@ class TCApi(EClient, EWrapper):
     def contractDetailsEnd(self, reqId):
         tprint("End Of Contract Details")
         self.information_received.set()
+
+    def tickPrice(self, reqId, tickType, price, attrib):
+        tprint(f"reqId: {reqId}, tickType: {TickTypeEnum.to_str(tickType)}, price: {price}, attrib: {attrib}")
+
+    def tickSize(self, reqId, tickType, size):
+        tprint(f"reqId: {reqId}, tickType: {TickTypeEnum.to_str(tickType)}, size: {size}")
 
 
 
