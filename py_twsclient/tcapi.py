@@ -10,6 +10,7 @@ class TCApi(EClient, EWrapper):
     def __init__(self, mgr):
         EClient.__init__(self, self)
         self.information_received = threading.Event()
+        self.market_data_received = threading.Event()
         self.mgr = mgr
 
     def nextValidId(self, tranId):

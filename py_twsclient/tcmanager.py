@@ -38,8 +38,12 @@ class TCManager:
         FROZEN = 2
         DELAYED = 3
 
-        self.api.reqMarketDataType(FROZEN)
-        self.api.reqMktData(self.api.nextId(), self.theStock.contract(), "232", False, False, [])
+        self.api.reqMarketDataType(DELAYED)
+        self.api.reqMktData(self.api.nextId(), self.theStock.contract(), "", False, False, [])
+
+        self.api.market_data_received.wait()
+        self.api.market_data_received.clear()
+
         tprint("Market Data Requested Successfully")
 
     def stop(self):
