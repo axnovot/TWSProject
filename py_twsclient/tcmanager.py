@@ -41,10 +41,12 @@ class TCManager:
         self.api.reqMarketDataType(DELAYED)
         self.api.reqMktData(self.api.nextId(), self.theStock.contract(), "", False, False, [])
 
+        tprint("Receiving Market Data")
+
         self.api.market_data_received.wait()
         self.api.market_data_received.clear()
 
-        tprint("Market Data Requested Successfully")
+
 
     def stop(self):
         self.api.disconnect()
