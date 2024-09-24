@@ -8,6 +8,7 @@ Skeleton Communications Application : twsclient, tcp_server
 
 
 
+
 IB Trader Workstation Client : py_twsclient
 - Connects to the IB TWS, downloads contract info and subscribes to market data.
 - Implements multithreading in order to allow program to execute operations concurrently such as sending and receiving information
