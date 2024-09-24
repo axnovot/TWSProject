@@ -1,5 +1,5 @@
 Skeleton Communications Application : twsclient, tcp_server
-- A C++ TCP client-server system that to exchange messages. Supports logging and external control via telnet or netcat
+- A C++ TCP client-server system to exchange messages. Supports logging and external control via telnet or netcat
 
 
 
