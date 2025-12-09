@@ -1,6 +1,3 @@
-// As written by copilot
-
-
 #include <iostream>
 #include <cstring>
 #include <unistd.h>
